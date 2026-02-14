@@ -268,7 +268,7 @@ button:disabled{
 <label>นามสกุล</label>
 <input id="lastname">
 
-<label>ได้รับรางวัลตำแหน่ง</label>
+<label>ติดรางวัลตำแหน่ง</label>
 <select id="position">
 <option value="">เลือกตำแหน่ง</option>
 <option value="DIR">ผู้จัดการฝ่าย</option>
@@ -342,7 +342,33 @@ function showPopup(msg){
 function closePopup(){
  popup.style.display="none";
 }
+function showConfirmPopup(){
 
+ popupText.innerHTML = `
+ ⚠️กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันการส่ง<br><br>
+ หากต้องการแก้ไขรูปภาพ สามารถเลือกใหม่แล้วกดส่งอีกครั้ง<br>
+ ระบบจะอัปเดตไฟล์ให้อัตโนมัติ
+ `;
+
+ popupButtons.innerHTML = `
+   <button id="confirmSend">ยืนยันการส่ง</button>
+   <button onclick="closePopup()" 
+   style="margin-top:10px;background:#eee;color:#333;">
+   กลับไปแก้ไข
+   </button>
+ `;
+
+ popup.style.display="flex";
+
+ document
+   .getElementById("confirmSend")
+   .addEventListener("click", ()=>{
+
+      closePopup();
+      upload();
+
+   });
+}
 
 // ⭐ auto scroll เวลาโฟกัส input (เทพมากบนมือถือ)
 document.querySelectorAll("input,select").forEach(el=>{
@@ -386,7 +412,7 @@ if(!firstname.value || !lastname.value || !position.value || !rank.value || !fil
  return;
 }
 
-upload();
+showConfirmPopup();
 
 });
 
@@ -458,6 +484,7 @@ showPopup("ระบบขัดข้อง");
 
 </body>
 </html>
+
 
 
 
