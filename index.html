@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Treasure Submission</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Prompt',sans-serif;
+
+  background:#ecd9b0 url("https://www.transparenttextures.com/patterns/aged-paper.png");
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+/* CARD */
+
+.card{
+  width:460px;
+  padding:38px;
+
+  background:#fff8e7;
+  border-radius:16px;
+
+  box-shadow:
+  0 30px 80px rgba(0,0,0,.25),
+  inset 0 0 25px rgba(212,175,55,.15);
+}
+
+.title{
+  text-align:center;
+  font-size:26px;
+  font-weight:600;
+  color:#3a2d16;
+}
+
+.subtitle{
+  text-align:center;
+  margin-bottom:26px;
+  color:#7a5a2b;
+}
+
+label{
+  margin-top:14px;
+  display:block;
+}
+
+input,select{
+  width:100%;
+  padding:13px;
+  margin-top:6px;
+
+  border-radius:10px;
+  border:1px solid #c9a86a;
+  background:#fffdf6;
+}
+
+/* upload */
+
+.upload{
+  margin-top:14px;
+  padding:18px;
+  border-radius:12px;
+  border:2px dashed #caa754;
+  text-align:center;
+  cursor:pointer;
+  background:#fff3d6;
+}
+
+.upload:hover{
+  background:#ffe7b0;
+}
+
+.upload input{
+  display:none;
+}
+
+img{
+  width:100%;
+  margin-top:12px;
+  border-radius:10px;
+}
+
+/* BUTTON */
+
+button{
+  width:100%;
+  padding:16px;
+  margin-top:24px;
+
+  border:none;
+  border-radius:12px;
+
+  font-size:16px;
+  font-weight:600;
+
+  background:linear-gradient(135deg,#d4af37,#f1d17a);
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+button:hover{
+  transform:translateY(-2px);
+}
+
+button:disabled{
+  opacity:.6;
+}
+
+
+/* ===========================
+   CINEMATIC LOADING
+=========================== */
+
+#loading{
+  position:fixed;
+  inset:0;
+
+  display:none;
+  justify-content:center;
+  align-items:center;
+
+  background:rgba(15,12,8,.75);
+  backdrop-filter:blur(10px);
+
+  z-index:5000;
+}
+
+.loading-box{
+
+  width:340px;
+
+  padding:46px 38px;
+
+  border-radius:20px;
+
+  text-align:center;
+
+  background:linear-gradient(145deg,#fff6dd,#f3e2b3);
+
+  box-shadow:
+  0 35px 100px rgba(0,0,0,.55),
+  inset 0 0 30px rgba(212,175,55,.3);
+}
+
+/* GOLD SPINNER */
+
+.gold-spinner{
+
+  width:80px;
+  height:80px;
+
+  margin:auto;
+
+  border-radius:50%;
+
+  border:7px solid rgba(212,175,55,.25);
+  border-top:7px solid #d4af37;
+
+  animation:spin 1s linear infinite,
+            glow 2.2s ease-in-out infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+@keyframes glow{
+
+  0%{
+    box-shadow:0 0 12px rgba(212,175,55,.2);
+  }
+
+  50%{
+    box-shadow:
+      0 0 40px rgba(212,175,55,.7),
+      0 0 80px rgba(212,175,55,.35);
+  }
+
+  100%{
+    box-shadow:0 0 12px rgba(212,175,55,.2);
+  }
+}
+
+.loading-title{
+
+  margin-top:24px;
+
+  font-size:19px;
+  font-weight:600;
+
+  color:#3a2d16;
+
+  animation:breath 2.6s ease-in-out infinite;
+}
+
+@keyframes breath{
+  0%{opacity:.5;}
+  50%{opacity:1;}
+  100%{opacity:.5;}
+}
+
+.loading-sub{
+  margin-top:8px;
+  font-size:13px;
+  color:#6b5630;
+}
+
+
+/* POPUP */
+
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+
+  display:none;
+  justify-content:center;
+  align-items:center;
+
+  z-index:6000;
+}
+
+.popup-card{
+  background:#fff8e7;
+  padding:28px;
+  width:340px;
+  border-radius:16px;
+  text-align:center;
+}
+
+.popup-buttons{
+  margin-top:18px;
+  display:flex;
+  gap:10px;
+}
+
+.popup-buttons button{
+  flex:1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="title">Treasure Submission</div>
+<div class="subtitle">ส่งภาพเพื่อรับสมบัติแห่งเกียรติยศ</div>
+
+<label>ชื่อ</label>
+<input id="firstname">
+
+<label>นามสกุล</label>
+<input id="lastname">
+
+<label>ตำแหน่ง</label>
+<select id="position">
+<option value="">เลือกตำแหน่ง</option>
+<option value="DIR">ผู้จัดการฝ่าย</option>
+<option value="REG">ผู้จัดการภาค</option>
+<option value="CEN">ผู้บริหารศูนย์</option>
+<option value="MDRT">MDRT</option>
+</select>
+
+<label>อันดับ</label>
+<input id="rank" type="number" min="1">
+
+<label class="upload">
+📜 คลิกเพื่อเลือกรูป
+<input type="file" id="file" accept="image/png, image/jpeg">
+</label>
+
+<img id="preview" style="display:none"/>
+
+<button id="uploadBtn">ส่งขึ้นเรือ</button>
+
+</div>
+
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="loading-box">
+      <div class="gold-spinner"></div>
+      <div class="loading-title">กำลังส่งสมบัติขึ้นเรือ</div>
+      <div class="loading-sub">ระบบกำลังจัดเก็บภาพอย่างปลอดภัย</div>
+  </div>
+</div>
+
+
+<!-- POPUP -->
+<div id="popup" class="popup">
+  <div class="popup-card">
+    <div id="popup-text"></div>
+    <div class="popup-buttons" id="popup-buttons"></div>
+  </div>
+</div>
+
+
+
+<script>
+"use strict";
+
+const API_URL="https://script.google.com/macros/s/AKfycbw2VaICuPVIYvagv9wXt_LIcstP8XM0XBEDjp4NxcvojecOoc3X8J_o8l1USpWkuRKkBw/exec";
+
+const firstname=document.getElementById("firstname");
+const lastname=document.getElementById("lastname");
+const position=document.getElementById("position");
+const rank=document.getElementById("rank");
+const fileInput=document.getElementById("file");
+const preview=document.getElementById("preview");
+const btn=document.getElementById("uploadBtn");
+
+const loading=document.getElementById("loading");
+
+const popup=document.getElementById("popup");
+const popupText=document.getElementById("popup-text");
+const popupButtons=document.getElementById("popup-buttons");
+
+
+// popup
+function showPopup(msg){
+ popupText.innerText=msg;
+ popupButtons.innerHTML=`<button onclick="closePopup()">ตกลง</button>`;
+ popup.style.display="flex";
+}
+
+function closePopup(){
+ popup.style.display="none";
+}
+
+
+// preview
+fileInput.addEventListener("change",()=>{
+
+const f=fileInput.files[0];
+if(!f) return;
+
+if(!["image/jpeg","image/png"].includes(f.type)){
+ showPopup("อนุญาตเฉพาะ JPG หรือ PNG");
+ fileInput.value="";
+ return;
+}
+
+if(f.size>10*1024*1024){
+ showPopup("ไฟล์ต้องไม่เกิน 10MB");
+ fileInput.value="";
+ return;
+}
+
+preview.src=URL.createObjectURL(f);
+preview.style.display="block";
+
+});
+
+
+// click
+btn.addEventListener("click",()=>{
+
+if(!firstname.value || !lastname.value || !position.value || !rank.value || !fileInput.files[0]){
+ showPopup("กรุณากรอกข้อมูลให้ครบ");
+ return;
+}
+
+upload();
+
+});
+
+
+// upload
+async function upload(){
+
+try{
+
+btn.disabled=true;
+loading.style.display="flex";
+
+const f=fileInput.files[0];
+const reader=new FileReader();
+
+reader.onload=async ()=>{
+
+try{
+
+await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+firstname:firstname.value.trim(),
+lastname:lastname.value.trim(),
+position:position.value,
+rank:rank.value,
+file:reader.result.split(",")[1],
+mimeType:f.type
+})
+});
+
+loading.style.display="none";
+btn.disabled=false;
+
+showPopup("✅ อัปโหลดสำเร็จ!");
+
+preview.style.display="none";
+firstname.value="";
+lastname.value="";
+rank.value="";
+position.value="";
+fileInput.value="";
+
+}catch(err){
+
+loading.style.display="none";
+btn.disabled=false;
+
+showPopup("เกิดข้อผิดพลาดในการอัปโหลด");
+console.error(err);
+
+}
+
+};
+
+reader.readAsDataURL(f);
+
+}catch(err){
+
+loading.style.display="none";
+btn.disabled=false;
+showPopup("ระบบขัดข้อง");
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
