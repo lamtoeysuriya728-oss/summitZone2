@@ -431,6 +431,30 @@ body{
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:#f5ead0;}
 ::-webkit-scrollbar-thumb{background:#c8920a55;border-radius:3px;}
+
+/* custom confirm modal */
+#custom-confirm{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(10,3,0,0.65);backdrop-filter:blur(3px);
+  align-items:center;justify-content:center;
+}
+#custom-confirm.active{display:flex;}
+#custom-confirm-box{
+  background:linear-gradient(160deg,#fffaf0,#fdf3dc);
+  border:2px solid #c8920a;border-radius:18px;
+  padding:28px 28px 22px;max-width:320px;width:90%;
+  text-align:center;box-shadow:0 12px 50px rgba(0,0,0,.45);
+  animation:overlayPop .3s cubic-bezier(.2,1.3,.4,1) both;
+}
+#custom-confirm-box p{
+  font-family:'Cinzel',serif;font-size:clamp(13px,3vw,16px);
+  color:#5a2a00;line-height:1.6;margin-bottom:6px;
+}
+#custom-confirm-box small{
+  font-family:'Georgia',serif;font-size:12px;color:#a07040;
+  display:block;margin-bottom:20px;
+}
+#custom-confirm-btns{display:flex;gap:12px;justify-content:center;}
 </style>
 </head>
 <body>
@@ -555,9 +579,35 @@ body{
   </div>
 </div>
 
+<!-- ══ CUSTOM CONFIRM ══ -->
+<div id="custom-confirm">
+  <div id="custom-confirm-box">
+    <p id="custom-confirm-msg"></p>
+    <small id="custom-confirm-sub"></small>
+    <div id="custom-confirm-btns">
+      <button class="btn-ghost" id="custom-confirm-no">ยกเลิก</button>
+      <button class="btn-red"   id="custom-confirm-yes">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══ DATA ══
 let allItems=[], decoyItems=[], players=[], currentTurn=0;
+
+// ══ CUSTOM CONFIRM ══
+function customConfirm(msg, sub, onYes){
+  document.getElementById('custom-confirm-msg').textContent = msg;
+  document.getElementById('custom-confirm-sub').textContent = sub || '';
+  document.getElementById('custom-confirm').classList.add('active');
+  const box   = document.getElementById('custom-confirm');
+  const btnYes = document.getElementById('custom-confirm-yes');
+  const btnNo  = document.getElementById('custom-confirm-no');
+  const close  = ()=>{ box.classList.remove('active'); btnYes.onclick=null; btnNo.onclick=null; };
+  btnYes.onclick = ()=>{ close(); onYes(); };
+  btnNo.onclick  = close;
+  box.onclick    = e=>{ if(e.target===box) close(); };
+}
 let deckForTurn=[], flippedState=[], flippedCount=0, maxFlips=0, results=[];
 let currentScreen='setup';
 const SK='pirateCardDraw_zone2';
@@ -830,17 +880,21 @@ function jumpToTurn(i){
 }
 
 function redrawCurrent(){
-  if(splashActive){ dismissSplash(); return; } // dismiss splash first, let user tap again
+  if(splashActive){ dismissSplash(); return; }
   const target = viewingTurn!==-1 ? viewingTurn : currentTurn;
   if(target < 0 || target >= players.length) return;
-  const ok = window.confirm(`จับใหม่สำหรับ "${players[target].name}" ใช่ไหม?\nผลเดิมจะถูกลบทั้งหมด`);
-  if(!ok) return;
-  results[target] = {name:players[target].name, draws:players[target].draws, items:[], _deck:null, _flipped:null};
-  viewingTurn = -1;
-  currentTurn = target;
-  hideActionBtns();
-  document.getElementById('cards-grid').classList.remove('view-mode');
-  startTurn();
+  customConfirm(
+    `จับใหม่สำหรับ "${players[target].name}"?`,
+    'ผลเดิมจะถูกลบทั้งหมด',
+    ()=>{
+      results[target] = {name:players[target].name, draws:players[target].draws, items:[], _deck:null, _flipped:null};
+      viewingTurn = -1;
+      currentTurn = target;
+      hideActionBtns();
+      document.getElementById('cards-grid').classList.remove('view-mode');
+      startTurn();
+    }
+  );
 }
 
 function checkTurnDone(){
