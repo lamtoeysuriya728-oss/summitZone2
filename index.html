@@ -1,503 +1,1225 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-
-<meta charset="UTF-8"/>
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<title>หอเกียรติยศ</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏴‍☠️ โซน 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-
-*{box-sizing:border-box;}
+*{box-sizing:border-box;margin:0;padding:0;}
 
 body{
-  margin:0;
-  font-family:'Prompt',sans-serif;
-
-  background:#ecd9b0 url("https://www.transparenttextures.com/patterns/aged-paper.png");
-
   min-height:100vh;
-  padding:40px 14px;
+  background:#f5ead0;
+  background-image:
+    radial-gradient(ellipse at 20% 10%,#ffe8a0 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 90%,#f0d49a 0%,transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c8920a' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+  font-family:'Cinzel',serif;
+  color:#3a1a00;
+  overflow-x:hidden;
+}
+.scroll-wrap{max-width:960px;margin:0 auto;padding:0 16px 80px;}
+
+/* ── PLAY SCREEN ── */
+#play-screen{
+  display:none;position:fixed;inset:0;
+  background:#f5ead0;
+  background-image:
+    radial-gradient(ellipse at 20% 10%,#ffe8a0 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 90%,#f0d49a 0%,transparent 50%);
+  overflow:hidden;flex-direction:column;
+  padding:8px 12px 0;gap:5px;
+}
+#play-screen.active{display:flex;}
+
+.play-topbar{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.players-progress{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.pip{
+  padding:5px 14px;border-radius:20px;font-size:11px;letter-spacing:1px;
+  border:1px solid #cc220066;color:#cc2200;background:rgba(200,30,0,0.07);
+  transition:all .25s;white-space:nowrap;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.pip:hover{background:rgba(200,30,0,0.14);border-color:#cc2200;}
+.pip.active{
+  background:linear-gradient(145deg,#a06800,#e8a820);
+  border-color:#c8920a;color:#fff;font-weight:bold;cursor:default;
+  box-shadow:0 2px 10px rgba(160,100,0,0.4);
+}
+.pip.done{
+  background:rgba(160,20,0,0.12);color:#8B1a00;
+  border:1px solid #aa220088;opacity:.75;cursor:pointer;
+  text-decoration:none;
+}
+.pip.done:hover{opacity:1;background:rgba(160,20,0,0.22);border-color:#cc2200;}
+
+/* turn header */
+.turn-header-row{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(160deg,#fffaf0,#fdf3dc);
+  border:2px solid #c8920a;border-radius:10px;padding:6px 14px;
+  box-shadow:0 3px 14px rgba(120,60,0,0.1);flex-shrink:0;overflow:hidden;
+}
+.turn-label{font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#a07040;white-space:nowrap;flex-shrink:0;}
+.turn-name {font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);color:#7a3e00;white-space:nowrap;flex-shrink:0;font-weight:700;}
+.turn-draws{font-family:'Cinzel',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#b08040;white-space:nowrap;flex-shrink:0;}
+.turn-hint{font-family:'Cinzel',serif;font-size:clamp(9px,1.8vw,18px);letter-spacing:1px;color:#a07040;text-align:right;margin-left:auto;white-space:nowrap;flex-shrink:0;}
+
+/* cards grid */
+.cards-grid{
+  display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;align-content:center;
+  flex:1;min-height:0;overflow:hidden;
 }
 
-.page-wrap{
-  max-width:520px;
-  margin:auto;
+.card-wrapper{
+  perspective:1000px;
+  width:var(--cw,110px);height:var(--ch,165px);
+  cursor:pointer;animation:cardDrop .4s ease-out both;
+  user-select:none;-webkit-user-select:none;position:relative;flex-shrink:0;
+}
+@keyframes cardDrop{
+  from{opacity:0;transform:translateY(28px) scale(.85) rotate(-5deg);}
+  to  {opacity:1;transform:translateY(0) scale(1) rotate(0);}
+}
+.card-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform .05s linear;
+}
+.card-wrapper.flipped .card-inner{
+  transform:rotateY(180deg)!important;
+  transition:transform .65s cubic-bezier(.2,.8,.3,1.2)!important;
+}
+.card-wrapper:not(.flipped):not(.disabled):hover .card-inner{
+  transform:rotateY(10deg) translateY(-4px);transition:transform .3s ease;
+}
+.card-wrapper.flipped{cursor:default;}
+.card-wrapper.disabled:not(.flipped){opacity:.35;cursor:not-allowed;}
+
+/* ── VIEW MODE (after reveal / looking back) ── */
+.cards-grid.view-mode .card-wrapper.flipped .card-front{
+  background:linear-gradient(160deg,#ffffff,#f8f8f8) !important;
+  border-color:#c8920a !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.cards-grid.view-mode .card-wrapper.flipped .card-front.decoy{
+  background:linear-gradient(160deg,#fff8f5,#fff0e8) !important;
+  border-color:#cc4400 !important;
+}
+.cards-grid.view-mode .card-wrapper:not(.flipped) .card-back{
+  background:linear-gradient(160deg,#c8c8c8,#b0b0b0) !important;
+  border-color:#999 !important;
+  box-shadow:none;
+}
+.cards-grid.view-mode .card-wrapper:not(.flipped) .card-number,
+.cards-grid.view-mode .card-wrapper:not(.flipped) .card-back-label,
+.cards-grid.view-mode .card-wrapper:not(.flipped) .tl-mark,
+.cards-grid.view-mode .card-wrapper:not(.flipped) .br-mark{
+  color:#888 !important;
+  text-shadow:none !important;
+}
+.cards-grid.view-mode .card-wrapper:not(.flipped){
+  opacity:1 !important;cursor:default !important;
+}
+.cards-grid.view-mode .card-wrapper:not(.flipped) .card-back::before{
+  border-color:rgba(100,100,100,.2) !important;
 }
 
+/* ── CARD OVERLAY ── */
+#card-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(30,10,0,0.75);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+  gap:clamp(16px,4vw,40px);flex-wrap:wrap;
+}
+#card-overlay.active{display:flex;}
 
-.card{
-  padding:34px;
-
-  background:#fff8e7;
-  border-radius:18px;
-
-  box-shadow:
-  0 30px 80px rgba(0,0,0,.25),
-  inset 0 0 25px rgba(212,175,55,.15);
+#overlay-card{
+  position:relative;
+  width:clamp(140px,38vw,260px);height:clamp(210px,57vw,390px);
+  perspective:1200px;
+  user-select:none;-webkit-user-select:none;
+  animation:overlayPop .35s cubic-bezier(.2,1.3,.4,1) both;
+  flex-shrink:0;
+}
+@keyframes overlayPop{
+  from{transform:scale(.4) translateY(60px);opacity:0;}
+  to  {transform:scale(1) translateY(0);opacity:1;}
 }
 
-.title{
-  text-align:center;
-  font-size:26px;
-  font-weight:600;
-  color:#3a2d16;
+/* overlay action buttons — right on wide, below on mobile */
+#overlay-actions{
+  display:none;flex-direction:column;gap:14px;align-items:center;
+  animation:splashPop .4s cubic-bezier(.2,1.3,.4,1) both;
+}
+#overlay-actions.active{display:flex;}
+#overlay-actions button{
+  width:clamp(130px,36vw,160px);
+  padding:clamp(10px,2vh,14px) 20px;
+  border:none;border-radius:10px;
+  font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(12px,3.5vw,15px);letter-spacing:2px;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+#overlay-actions button:active{transform:scale(.96);}
+#btn-confirm{background:linear-gradient(145deg,#a06800,#e8a820);color:#fff;box-shadow:0 5px 18px rgba(160,100,0,.5);}
+#btn-reroll {background:linear-gradient(145deg,#6a006a,#b020b0);color:#fff;box-shadow:0 5px 18px rgba(120,0,120,.45);}
+
+#overlay-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transform:rotateY(0deg);transition:none;
+}
+#overlay-inner.snap-open{
+  transform:rotateY(180deg)!important;
+  transition:transform .6s cubic-bezier(.2,.8,.3,1.2)!important;
 }
 
-.subtitle{
-  text-align:center;
-  margin-bottom:26px;
-  color:#7a5a2b;
+#overlay-card .card-face{border-radius:18px;}
+#overlay-card .card-back{border-radius:18px;}
+#overlay-card .card-front{border-radius:18px;}
+#overlay-card .card-number{font-size:clamp(60px,18vw,120px);}
+#overlay-card .card-back-label{font-size:clamp(9px,2vw,14px);letter-spacing:4px;}
+#overlay-card .tl-mark,#overlay-card .br-mark{font-size:clamp(14px,3vw,22px);}
+#overlay-card .cf-num{font-size:clamp(12px,3vw,20px);}
+#overlay-card .cf-main{font-size:clamp(16px,5vw,32px);}
+#overlay-card .cf-main.sm{font-size:clamp(13px,4vw,26px);}
+#overlay-card .cf-main.xs{font-size:clamp(11px,3.2vw,20px);}
+
+#drag-hint{
+  position:absolute;bottom:-48px;left:50%;transform:translateX(-50%);
+  color:rgba(255,220,100,.85);font-size:13px;letter-spacing:2px;
+  font-family:'Cinzel',serif;text-align:center;pointer-events:none;
+  animation:hintBob .9s ease-in-out infinite alternate;
+}
+@keyframes hintBob{
+  from{transform:translateX(-50%) translateY(0)}
+  to  {transform:translateX(-50%) translateY(-6px)}
 }
 
-/* INPUT */
+#overlay-flash{
+  position:absolute;inset:0;border-radius:18px;
+  background:radial-gradient(circle,rgba(255,220,100,.9) 0%,transparent 65%);
+  opacity:0;pointer-events:none;z-index:10;
+}
+#overlay-card.flash-anim #overlay-flash{animation:flashReveal .55s ease-out forwards;}
 
-label{
-  margin-top:16px;
-  display:block;
-  font-weight:500;
+.card-flash{
+  position:absolute;inset:0;border-radius:12px;
+  background:radial-gradient(circle,rgba(255,220,100,.85) 0%,transparent 70%);
+  opacity:0;pointer-events:none;z-index:30;
+}
+.card-wrapper.flash-anim .card-flash{animation:flashReveal .5s ease-out forwards;}
+@keyframes flashReveal{
+  0%  {opacity:.85;transform:scale(.5);}
+  60% {opacity:.5;transform:scale(1.1);}
+  100%{opacity:0;transform:scale(1.3);}
 }
 
-input,select{
+.card-face{
+  position:absolute;width:100%;height:100%;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;
+}
+.card-back{
+  background:linear-gradient(160deg,#ffffff,#f5f0e8);
+  border:2px solid #c8920a;
+  box-shadow:0 4px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.card-back::before{
+  content:'';position:absolute;inset:6px;
+  border:1px solid rgba(200,146,10,.3);border-radius:7px;pointer-events:none;
+}
+.card-number{
+  font-family:'Cinzel Decorative',serif;
+  font-size:calc(var(--cw,110px)*0.5);
+  font-weight:700;color:#c8920a;
+  text-shadow:2px 3px 0 rgba(120,60,0,.2);
+  line-height:1;position:relative;z-index:1;
+}
+.card-back-label{
+  font-size:calc(var(--cw,110px)*0.07);
+  letter-spacing:3px;color:#c8a050;margin-top:5px;
+  position:relative;z-index:1;font-family:'Cinzel',serif;
+}
+.card-back .tl-mark{position:absolute;top:7px;left:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;}
+.card-back .br-mark{position:absolute;bottom:7px;right:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;transform:rotate(180deg);}
 
-  width:100%;
-  padding:14px;
-  margin-top:6px;
+.card-front{
+  transform:rotateY(180deg);
+  border:2px solid var(--accent-border);
+  background:linear-gradient(160deg,#ffffff,#faf6ee);
+  box-shadow:0 4px 16px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.card-front::before{
+  content:'';position:absolute;inset:5px;
+  border:1px solid var(--accent-border);border-radius:7px;
+  pointer-events:none;opacity:.35;
+}
+.card-front.decoy{background:linear-gradient(160deg,#fff8f5,#fff0e8);border-color:#cc4400;}
+.card-front.decoy::before{border-color:#cc4400;opacity:.28;}
+.cf-num{
+  position:absolute;top:7px;left:9px;
+  font-family:'Cinzel Decorative',serif;
+  font-size:calc(var(--cw,110px)*.11);
+  color:var(--accent-color);opacity:.6;
+}
+.cf-main{
+  font-family:'Cinzel',serif;font-size:calc(var(--cw,110px)*.13);
+  font-weight:700;text-align:center;color:#2a1400;
+  line-height:1.3;padding:0 8px;letter-spacing:.3px;
+}
+.cf-main.sm{font-size:calc(var(--cw,110px)*.11);}
+.cf-main.xs{font-size:calc(var(--cw,110px)*.09);}
+.cf-main.decoy-text{color:#8B1a00;}
 
-  border-radius:12px;
-  border:1px solid #c9a86a;
-  background:#fffdf6;
-
-  font-size:16px; /* ⭐ กัน Safari zoom */
+/* bottom action bar */
+.play-actions{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;flex-shrink:0;
+  padding-bottom:46px;position:relative;z-index:400;
 }
 
-/* upload */
+.result-banner{
+  background:linear-gradient(145deg,rgba(200,146,10,.15),rgba(200,146,10,.05));
+  border:2px solid #c8920a;border-radius:12px;padding:10px 18px;
+  text-align:center;animation:cardDrop .4s ease-out;flex-shrink:0;
+}
+.result-banner p{font-family:'Cinzel Decorative',serif;font-size:clamp(11px,2vw,14px);letter-spacing:2px;color:#7a3e00;}
 
-.upload{
-  margin-top:16px;
-  padding:20px;
-  border-radius:14px;
-  border:2px dashed #caa754;
-  text-align:center;
-  cursor:pointer;
-  background:#fff3d6;
+/* setup & summary */
+.header{text-align:center;padding:32px 16px 18px;}
+.header-icon{font-size:48px;display:block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4.5vw,34px);letter-spacing:4px;color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);margin-top:10px;}
+.header p{color:#a07040;font-size:11px;letter-spacing:4px;margin-top:8px;}
+
+.panel{
+  background:linear-gradient(160deg,#fffaf0,#fdf3dc);
+  border:2px solid #c8920a;border-radius:16px;padding:22px;
+  box-shadow:0 6px 28px rgba(120,60,0,.14);
+  position:relative;margin-bottom:13px;
+}
+.panel::before{content:'';position:absolute;inset:7px;border:1px solid rgba(200,146,10,.22);border-radius:10px;pointer-events:none;}
+.section-label{font-size:10px;letter-spacing:4px;color:#9a6010;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#c8920a55,transparent);}
+
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.tag{display:inline-flex;align-items:center;gap:5px;background:rgba(200,146,10,.1);border:1px solid #c8920a88;padding:5px 11px;border-radius:20px;font-size:13px;color:#7a4000;}
+.tag.decoy-tag{background:rgba(180,60,0,.08);border-color:#cc440088;color:#8B2000;}
+.tag .del{background:none;border:none;color:#c07030;cursor:pointer;font-size:16px;line-height:1;padding:0;}
+.tag .del:hover{color:#cc2200;}
+
+.input-row{display:flex;gap:10px;}
+.input-row input{flex:1;background:#fffdf5;border:1px solid #c8920a88;color:#3a1a00;padding:10px 14px;border-radius:8px;font-family:'Georgia',serif;font-size:14px;outline:none;transition:border-color .2s;}
+.input-row input:focus{border-color:#c8920a;}
+.input-row input::placeholder{color:#c8a870;}
+
+.players-list{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;}
+.player-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(200,146,10,.06);border:1px solid #c8920a55;border-radius:10px;padding:10px 14px;}
+.player-num{font-family:'Cinzel Decorative',serif;font-size:18px;color:#c8920a;min-width:24px;text-align:center;}
+.player-name-inp{flex:1;min-width:110px;background:#fffdf5;border:1px solid #c8920a66;color:#3a1a00;padding:8px 12px;border-radius:7px;font-family:'Georgia',serif;font-size:14px;outline:none;}
+.player-name-inp:focus{border-color:#c8920a;}
+.draws-ctrl{display:flex;align-items:center;gap:7px;}
+.draws-label{font-size:10px;letter-spacing:2px;color:#9a6010;white-space:nowrap;}
+.mini-btn{width:28px;height:28px;border:none;border-radius:6px;background:linear-gradient(145deg,#a06800,#e8a820);color:#fff;font-size:16px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(160,100,0,.25);transition:all .15s;}
+.mini-btn:hover{transform:translateY(-1px);}
+.draws-num{font-family:'Cinzel Decorative',serif;font-size:20px;color:#8B4A00;min-width:24px;text-align:center;}
+.del-player{background:none;border:none;color:#c07030;cursor:pointer;font-size:20px;padding:0;}
+.del-player:hover{color:#cc2200;}
+
+.btn-gold{background:linear-gradient(145deg,#a06800,#e8a820,#a06800);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 14px rgba(160,100,0,.3);transition:all .2s;white-space:nowrap;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(160,100,0,.45);}
+.btn-ghost{background:rgba(255,250,240,.85);border:1px solid #c8920a88;color:#8B5000;padding:10px 20px;border-radius:8px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-ghost:hover{background:rgba(200,146,10,.12);border-color:#c8920a;}
+.btn-red{background:linear-gradient(145deg,#8B1a00,#cc3300,#8B1a00);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 14px rgba(160,40,0,.3);transition:all .2s;white-space:nowrap;}
+.btn-red:hover{transform:translateY(-2px);}
+.start-btn{display:block;width:100%;margin-top:4px;background:linear-gradient(145deg,#8B4800,#d4820a,#8B4800);border:none;color:#fff;padding:16px;border-radius:10px;font-family:'Cinzel Decorative',serif;font-size:16px;letter-spacing:4px;cursor:pointer;box-shadow:0 6px 26px rgba(140,80,0,.35);transition:all .25s;position:relative;overflow:hidden;}
+.start-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-100%);transition:transform .5s;}
+.start-btn:hover::before{transform:translateX(100%);}
+.start-btn:hover{transform:translateY(-2px);}
+
+/* fullscreen btn — above ticker */
+#fs-btn{
+  position:fixed;bottom:50px;right:14px;z-index:500;
+  background:rgba(200,146,10,.9);border:none;border-radius:50%;
+  width:42px;height:42px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 14px rgba(0,0,0,.25);transition:all .2s;font-size:18px;color:#fff;
+}
+#fs-btn:hover{background:#c8920a;transform:scale(1.1);}
+
+/* confetti */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:400;}
+
+/* reward splash */
+#reward-splash{display:none;position:fixed;inset:0;z-index:350;align-items:center;justify-content:center;pointer-events:none;
+  background:rgba(20,5,0,0);transition:background .3s;}
+#reward-splash.active{display:flex;background:rgba(20,5,0,0.45);pointer-events:all;cursor:pointer;}
+#reward-splash.active::after{content:'แตะเพื่อปิด';position:absolute;bottom:clamp(60px,10vh,100px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:clamp(11px,2vw,15px);letter-spacing:3px;color:rgba(255,220,120,.7);pointer-events:none;animation:hintBob .9s ease-in-out infinite alternate;}
+#reward-splash-inner{
+  text-align:center;animation:splashPop .55s cubic-bezier(.2,1.4,.4,1) both;
+  background:rgba(0,0,0,0.55);
+  border:2px solid rgba(255,200,80,.4);
+  border-radius:24px;
+  padding:clamp(20px,4vw,48px) clamp(28px,6vw,72px);
+  backdrop-filter:blur(6px);
+  box-shadow:0 8px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
+}
+@keyframes splashPop{
+  0%  {opacity:0;transform:scale(.3) translateY(40px);}
+  70% {opacity:1;transform:scale(1.08) translateY(-6px);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
+.splash-label{
+  font-family:'Cinzel',serif;font-size:clamp(11px,2vw,17px);
+  letter-spacing:6px;color:rgba(255,220,120,.9);
+  text-shadow:0 1px 8px rgba(0,0,0,.8);
+  margin-bottom:12px;
+}
+.splash-text{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(26px,7vw,80px);
+  color:#fff;font-weight:700;line-height:1.15;
+  text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 40px rgba(255,200,60,.8),0 0 80px rgba(255,160,0,.4);
+  animation:splashGlow 1s ease-in-out infinite alternate;
+}
+@keyframes splashGlow{
+  from{text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 30px rgba(255,200,60,.7),0 0 60px rgba(255,160,0,.3);}
+  to  {text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 50px rgba(255,230,80,1), 0 0 100px rgba(255,200,0,.6);}
 }
 
-.upload:hover{
-  background:#ffe7b0;
+/* news ticker */
+#news-ticker{
+  position:fixed;bottom:0;left:0;right:0;z-index:300;height:38px;
+  background:linear-gradient(90deg,rgba(80,20,0,.93),rgba(120,50,0,.93),rgba(80,20,0,.93));
+  border-top:2px solid #c8920a;overflow:hidden;display:none;
+  box-shadow:0 -3px 20px rgba(0,0,0,.35);align-items:center;
 }
+#news-ticker.active{display:flex;}
+#ticker-track{display:inline-flex;gap:0;white-space:nowrap;animation:tickerScroll 35s linear infinite;}
+@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 30px;font-family:'Cinzel',serif;font-size:clamp(11px,1.5vw,15px);letter-spacing:1px;color:#fde68a;}
+.ticker-team{color:#fbbf24;font-weight:700;}
+.ticker-reward{color:#fef3c7;}
+.ticker-decoy{color:#fca5a5;}
+.ticker-sep{color:#c8920a55;margin:0 6px;font-size:18px;}
 
-.upload input{
-  display:none;
+/* bonus toast */
+#bonus-toast{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.7);
+  background:linear-gradient(145deg,#8B1a00,#cc3300);
+  color:#fff;padding:18px 34px;border-radius:16px;
+  font-family:'Cinzel Decorative',serif;font-size:clamp(18px,4vw,28px);letter-spacing:3px;
+  text-align:center;pointer-events:none;z-index:999;
+  box-shadow:0 8px 40px rgba(160,30,0,.5);opacity:0;transition:none;
 }
+#bonus-toast.show{animation:toastPop .8s cubic-bezier(.2,1.4,.4,1) forwards,toastFade .4s ease-in 1.4s forwards;}
+@keyframes toastPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes toastFade{from{opacity:1}to{opacity:0}}
 
-img{
-  width:100%;
-  margin-top:14px;
-  border-radius:12px;
-}
+/* summary */
+.summary-card{background:linear-gradient(160deg,#fffaf0,#fdf3dc);border:2px solid #c8920a;border-radius:14px;padding:16px 20px;margin-bottom:12px;box-shadow:0 4px 14px rgba(120,60,0,.1);}
+.summary-player{font-family:'Cinzel Decorative',serif;font-size:14px;color:#7a3e00;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.summary-badge{font-size:10px;letter-spacing:1px;color:#a07040;background:rgba(200,146,10,.12);border:1px solid #c8920a66;padding:2px 10px;border-radius:12px;font-family:'Cinzel',serif;}
+.summary-items{display:flex;flex-wrap:wrap;gap:7px;}
+.summary-item{background:rgba(200,146,10,.12);border:1px solid #c8920a88;padding:4px 12px;border-radius:16px;font-size:13px;color:#5a3000;}
+.summary-item.decoy{background:rgba(180,40,0,.08);border-color:#cc440088;color:#8B1a00;}
+.action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
 
-/* BUTTON */
-
-button{
-  width:100%;
-  padding:16px;
-  margin-top:26px;
-
-  border:none;
-  border-radius:14px;
-
-  font-size:16px;
-  font-weight:600;
-
-  background:linear-gradient(135deg,#d4af37,#f1d17a);
-
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.6;
-}
-
-
-/* =========================
-   CINEMATIC LOADING
-========================= */
-
-#loading{
-  position:fixed;
-  inset:0;
-
-  display:none;
-  justify-content:center;
-  align-items:center;
-
-  background:rgba(15,12,8,.75);
-  backdrop-filter:blur(10px);
-
-  z-index:5000;
-}
-
-.loading-box{
-
-  width:320px;
-
-  padding:44px;
-
-  border-radius:22px;
-
-  text-align:center;
-
-  background:linear-gradient(145deg,#fff6dd,#f3e2b3);
-
-  box-shadow:
-  0 40px 120px rgba(0,0,0,.6),
-  inset 0 0 35px rgba(212,175,55,.35);
-}
-
-.gold-spinner{
-
-  width:82px;
-  height:82px;
-
-  margin:auto;
-
-  border-radius:50%;
-
-  border:7px solid rgba(212,175,55,.25);
-  border-top:7px solid #d4af37;
-
-  animation:spin 1s linear infinite,
-            glow 2.4s ease-in-out infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg);}
-}
-
-@keyframes glow{
-
-  0%{box-shadow:0 0 14px rgba(212,175,55,.2);}
-  50%{
-    box-shadow:
-    0 0 45px rgba(212,175,55,.8),
-    0 0 90px rgba(212,175,55,.4);
-  }
-  100%{box-shadow:0 0 14px rgba(212,175,55,.2);}
-}
-
-.loading-title{
-  margin-top:24px;
-  font-size:19px;
-  font-weight:600;
-}
-
-.loading-sub{
-  margin-top:6px;
-  font-size:13px;
-  color:#6b5630;
-}
-
-
-/* =========================
-   GLASS POPUP
-========================= */
-
-.popup{
-  position:fixed;
-  inset:0;
-
-  display:none;
-  justify-content:center;
-  align-items:center;
-
-  background:rgba(15,12,8,.75);
-  backdrop-filter:blur(10px);
-
-  z-index:6000;
-}
-
-.popup-card{
-
-  width:320px;
-  padding:34px;
-
-  border-radius:22px;
-  text-align:center;
-
-  background:linear-gradient(145deg,#fff6dd,#f3e2b3);
-
-  box-shadow:
-  0 40px 120px rgba(0,0,0,.6),
-  inset 0 0 35px rgba(212,175,55,.35);
-}
-
-.popup-text{
-  font-size:18px;
-  font-weight:600;
-}
-
-.popup-buttons{
-  margin-top:22px;
-}
-
-.popup-buttons button{
-  width:100%;
-}
-
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#f5ead0;}
+::-webkit-scrollbar-thumb{background:#c8920a55;border-radius:3px;}
 </style>
 </head>
-
 <body>
 
-<div class="page-wrap">
+<canvas id="confetti-canvas"></canvas>
+<div id="reward-splash">
+  <div id="reward-splash-inner">
+    <div class="splash-label">✦ &nbsp; รางวัลของคุณ &nbsp; ✦</div>
+    <div class="splash-text" id="splash-text"></div>
+  </div>
+</div>
+<div id="news-ticker"><div id="ticker-track"></div></div>
+<div id="bonus-toast"></div>
+<button id="fs-btn" onclick="toggleFullscreen()" title="เต็มจอ">⛶</button>
 
-<div class="card">
-
-<div class="title">หอแห่งเกียรติยศ โซน 2</div>
-<div class="subtitle">ส่งภาพเพื่อรับสมบัติแห่งเกียรติยศ</div>
-
-<label>ชื่อ</label>
-<input id="firstname">
-
-<label>นามสกุล</label>
-<input id="lastname">
-
-<label>ติดรางวัลตำแหน่ง</label>
-<select id="position">
-<option value="">เลือกตำแหน่ง</option>
-<option value="DIR">ผู้จัดการฝ่าย</option>
-<option value="REG">ผู้จัดการภาค</option>
-<option value="CEN">ผู้บริหารศูนย์</option>
-<option value="MBRTZone2">หน่วย MBRT(โซน 2)</option>
-<option value="MBRT">หน่วย MBRT(สำนักงานใหญ่)</option>
-</select>
-
-<label>อันดับ</label>
-<input id="rank" type="number" min="1">
-
-<label class="upload">
-📜 คลิกเพื่อเลือกรูป
-<input type="file" id="file" accept="image/png, image/jpeg">
-</label>
-
-<img id="preview" style="display:none"/>
-
-<button id="uploadBtn">ส่งข้อมูล</button>
-
+<!-- ══ SETUP ══ -->
+<div id="setup-screen">
+<div class="scroll-wrap">
+  <div class="header">
+    <span class="header-icon">🏴‍☠️</span>
+    <h1>SUMMIT CLUB</h1>
+    <p>⚓ &nbsp; กลุ่มการตลาด โซน 2 &nbsp; ⚓</p>
+  </div>
+  <div class="panel">
+    <div class="section-label">การ์ดรางวัล (<span id="item-count">0</span> ใบ)</div>
+    <div class="tags" id="tags-container"></div>
+    <div class="input-row">
+      <input type="text" id="new-item-input" placeholder="ชื่อรางวัล แล้วกด Enter" />
+      <button class="btn-gold" onclick="addItem()">เพิ่ม</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="section-label">การ์ดหลอก (<span id="decoy-count">0</span> ใบ) — เปิดแล้วได้สิทธิ์เพิ่ม</div>
+    <div class="tags" id="decoy-tags"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <input type="text" id="new-decoy-input" placeholder="ข้อความบนใบหลอก เช่น ยังไม่ใช่นะ!"
+        style="flex:1;min-width:150px;background:#fffdf5;border:1px solid #cc440088;color:#3a1a00;padding:10px 14px;border-radius:8px;font-family:'Georgia',serif;font-size:14px;outline:none;" />
+      <div style="display:flex;align-items:center;gap:7px;background:rgba(180,40,0,.06);border:1px solid #cc440055;border-radius:8px;padding:7px 12px;">
+        <span style="font-size:10px;letter-spacing:2px;color:#8B2000;white-space:nowrap">ได้สิทธิ์เพิ่ม</span>
+        <button class="mini-btn" style="background:linear-gradient(145deg,#8B1a00,#cc3300)" onclick="changeNewDecoyBonus(-1)">−</button>
+        <span id="new-decoy-bonus" style="font-family:'Cinzel Decorative',serif;font-size:20px;color:#8B1a00;min-width:22px;text-align:center">1</span>
+        <button class="mini-btn" style="background:linear-gradient(145deg,#8B1a00,#cc3300)" onclick="changeNewDecoyBonus(1)">+</button>
+        <span style="font-size:10px;letter-spacing:2px;color:#8B2000">ใบ</span>
+      </div>
+      <button class="btn-red" onclick="addDecoy()">เพิ่ม</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="section-label">ผู้เล่น &amp; สิทธิ์เปิดการ์ด</div>
+    <div class="players-list" id="players-list"></div>
+    <button class="btn-ghost" onclick="addPlayer()" style="width:100%;margin-top:4px">+ เพิ่มผู้เล่น / ฝ่าย</button>
+  </div>
+  <button class="start-btn" onclick="startGame()">เริ่มเกม!</button>
 </div>
 </div>
 
-
-<!-- LOADING -->
-<div id="loading">
-  <div class="loading-box">
-      <div class="gold-spinner"></div>
-      <div class="loading-title">กำลังส่งสมบัติเข้าหอเกียรติยศ</div>
-      <div class="loading-sub">ระบบกำลังจัดเก็บรูปภาพ</div>
+<!-- ══ PLAY ══ -->
+<div id="play-screen">
+  <div style="text-align:center;flex-shrink:0;padding:2px 0 1px;">
+    <img src="https://img5.pic.in.th/file/secure-sv1/Red-White-Bold-Gladiator-Logo101.md-Photoroom.png"
+         style="height:clamp(32px,6vh,90px);width:auto;object-fit:contain;mix-blend-mode:multiply;display:block;margin:0 auto 1px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(120,60,0,.25));" />
+    <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(11px,3.2vw,32px);letter-spacing:clamp(2px,1vw,5px);color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);line-height:1.1;">SUMMIT CLUB</div>
+    <div style="font-size:clamp(7px,1.2vw,13px);letter-spacing:clamp(1px,.8vw,4px);color:#a07040;margin-top:1px;">⚓ กลุ่มการตลาด โซน 2 ⚓</div>
+  </div>
+  <div class="play-topbar">
+    <div class="players-progress" id="players-progress"></div>
+    <button class="btn-ghost" onclick="goSetup()" style="font-size:10px;padding:6px 12px">⚙ ตั้งค่า</button>
+  </div>
+  <div class="turn-header-row">
+    <span class="turn-label">✦ ตาของ</span>
+    <span class="turn-name" id="turn-name"></span>
+    <span class="turn-draws" id="turn-draws"></span>
+    <span class="turn-hint" id="cards-hint"></span>
+  </div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <div class="result-banner" id="result-banner" style="display:none">
+    <p id="result-text"></p>
+  </div>
+  <div class="play-actions">
+    <button class="btn-ghost" id="reveal-all-btn" onclick="revealAll()" style="display:none">เฉลยทั้งหมด</button>
+    <button class="btn-red"   id="redraw-btn"     onclick="redrawCurrent()" style="display:none">🔄 จับใหม่</button>
+    <button class="btn-gold"  id="next-btn"       onclick="nextTurn()" style="display:none">ถัดไป ➜</button>
   </div>
 </div>
 
-
-<!-- POPUP -->
-<div id="popup" class="popup">
-  <div class="popup-card">
-    <div id="popup-text" class="popup-text"></div>
-    <div class="popup-buttons" id="popup-buttons"></div>
+<!-- ══ SUMMARY ══ -->
+<div id="summary-screen" style="display:none">
+<div class="scroll-wrap">
+  <div class="header" style="padding-top:24px">
+    <span style="font-size:40px">🏆</span>
+    <h1>สรุปผลทั้งหมด</h1>
+  </div>
+  <div id="summary-list"></div>
+  <div class="action-row" style="margin-top:20px">
+    <button class="btn-gold"  onclick="playAgain()">เล่นซ้ำ (ไพ่ชุดเดิม)</button>
+    <button class="btn-ghost" onclick="resetAll()">ตั้งค่าใหม่</button>
   </div>
 </div>
+</div>
 
+<!-- ══ CARD OVERLAY ══ -->
+<div id="card-overlay">
+  <div id="overlay-card">
+    <div id="overlay-flash"></div>
+    <div id="overlay-inner">
+      <div class="card-face card-back" id="ov-back">
+        <span class="tl-mark" id="ov-num-tl"></span>
+        <span class="card-number" id="ov-num"></span>
+        <span class="card-back-label">CARD</span>
+        <span class="br-mark" id="ov-num-br"></span>
+      </div>
+      <div class="card-face card-front" id="ov-front" style="--accent-border:#c8920a;--accent-color:#8B5E00">
+        <span class="cf-num" id="ov-cf-num"></span>
+        <span class="cf-main" id="ov-cf-main"></span>
+      </div>
+    </div>
+    <div id="drag-hint">▲ ลากขึ้นเพื่อเปิด</div>
+  </div>
+  <div id="overlay-actions">
+    <button id="btn-confirm" onclick="confirmReveal()">✓ ยืนยัน</button>
+    <button id="btn-reroll"  onclick="rerollReveal()">↺ เลือกใหม่</button>
+  </div>
+</div>
 
 <script>
-"use strict";
+// ══ DATA ══
+let allItems=[], decoyItems=[], players=[], currentTurn=0;
+let deckForTurn=[], flippedState=[], flippedCount=0, maxFlips=0, results=[];
+let currentScreen='setup';
+const SK='pirateCardDraw_zone2';
 
-const API_URL="https://script.google.com/macros/s/AKfycbzHCslsaE1AxmtGfanwfAnvGEdr-TY20s33AvA4KnlQ4oPi1Af-FmJgqGzHsaSQFNQ_zA/exec";
-
-const firstname=document.getElementById("firstname");
-const lastname=document.getElementById("lastname");
-const position=document.getElementById("position");
-const rank=document.getElementById("rank");
-const fileInput=document.getElementById("file");
-const preview=document.getElementById("preview");
-const btn=document.getElementById("uploadBtn");
-
-const loading=document.getElementById("loading");
-
-const popup=document.getElementById("popup");
-const popupText=document.getElementById("popup-text");
-const popupButtons=document.getElementById("popup-buttons");
-
-
-// popup
-function showPopup(msg){
- popupText.innerText=msg;
- popupButtons.innerHTML=`<button onclick="closePopup()">ตกลง</button>`;
- popup.style.display="flex";
+// ══ PERSIST ══
+function save(){
+  try{ localStorage.setItem(SK,JSON.stringify({allItems,decoyItems,players,screen:currentScreen,currentTurn,flippedCount,maxFlips,deckForTurn,flippedState,results,newDecoyBonus})); }catch(e){}
+}
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem(SK)||'null');
+    if(!s) return false;
+    allItems=s.allItems||[]; decoyItems=s.decoyItems||[]; players=s.players||[];
+    currentTurn=s.currentTurn||0; flippedCount=s.flippedCount||0; maxFlips=s.maxFlips||0;
+    deckForTurn=s.deckForTurn||[]; flippedState=s.flippedState||[]; results=s.results||[];
+    newDecoyBonus=s.newDecoyBonus||1; currentScreen=s.screen||'setup';
+    return true;
+  }catch(e){return false;}
 }
 
-function closePopup(){
- popup.style.display="none";
-}
-function showConfirmPopup(){
-
- popupText.innerHTML = `
- ⚠️กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันการส่ง<br><br>
- หากต้องการแก้ไขรูปภาพ สามารถเลือกใหม่แล้วกดส่งอีกครั้ง<br>
- ระบบจะอัปเดตไฟล์ให้อัตโนมัติ
- `;
-
- popupButtons.innerHTML = `
-   <button id="confirmSend">ยืนยันการส่ง</button>
-   <button onclick="closePopup()" 
-   style="margin-top:10px;background:#eee;color:#333;">
-   กลับไปแก้ไข
-   </button>
- `;
-
- popup.style.display="flex";
-
- document
-   .getElementById("confirmSend")
-   .addEventListener("click", ()=>{
-
-      closePopup();
-      upload();
-
-   });
+function showScreen(name){
+  currentScreen=name;
+  document.getElementById('setup-screen').style.display  =name==='setup'  ?'block':'none';
+  document.getElementById('play-screen').classList.toggle('active',name==='play');
+  document.getElementById('summary-screen').style.display=name==='summary'?'block':'none';
+  save();
 }
 
-// ⭐ auto scroll เวลาโฟกัส input (เทพมากบนมือถือ)
-document.querySelectorAll("input,select").forEach(el=>{
-  el.addEventListener("focus",()=>{
-    setTimeout(()=>{
-      el.scrollIntoView({behavior:"smooth",block:"center"});
-    },300);
+// ══ AUDIO ══
+let audioCtx=null;
+function playTone(f=440,d=.25,t="triangle",v=.22){
+  try{
+    if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.connect(g);g.connect(audioCtx.destination);
+    o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);
+    g.gain.setValueAtTime(v,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);
+    o.start();o.stop(audioCtx.currentTime+d);
+  }catch(e){}
+}
+function playShuffle(){[200,180,160,200].forEach((f,i)=>setTimeout(()=>playTone(f,.1,'sawtooth',.18),i*70));}
+function playReveal() {[330,415,523,659].forEach((f,k)=>setTimeout(()=>playTone(f,.2,'sine',.2),k*55));}
+function playDecoy()  {[220,196].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'sawtooth',.18),i*120));}
+function playWin()    {[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.3,'sine',.22),i*100));}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ══ SETUP: ITEMS ══
+function renderItems(){
+  document.getElementById('tags-container').innerHTML=allItems.map((it,i)=>`<div class="tag">${escHtml(it)}<button class="del" onclick="removeItem(${i})">×</button></div>`).join('');
+  document.getElementById('item-count').textContent=allItems.length;save();
+}
+function addItem(){const inp=document.getElementById('new-item-input');const v=inp.value.trim();if(!v)return;allItems.push(v);inp.value='';renderItems();}
+function removeItem(i){allItems.splice(i,1);renderItems();}
+document.getElementById('new-item-input').addEventListener('keydown',e=>{if(e.key==='Enter')addItem();});
+
+// ══ SETUP: DECOYS ══
+let newDecoyBonus=1;
+function changeNewDecoyBonus(d){newDecoyBonus=Math.max(1,newDecoyBonus+d);document.getElementById('new-decoy-bonus').textContent=newDecoyBonus;}
+function renderDecoys(){
+  document.getElementById('decoy-tags').innerHTML=decoyItems.map((it,i)=>`<div class="tag decoy-tag">${escHtml(it.text)}<span style="font-size:10px;background:rgba(180,40,0,.15);border-radius:10px;padding:1px 7px;margin-left:2px;color:#8B1a00">+${it.bonus}</span><button class="del" onclick="removeDecoy(${i})">×</button></div>`).join('');
+  document.getElementById('decoy-count').textContent=decoyItems.length;save();
+}
+function addDecoy(){const inp=document.getElementById('new-decoy-input');const v=inp.value.trim();if(!v)return;decoyItems.push({text:v,bonus:newDecoyBonus});inp.value='';renderDecoys();}
+function removeDecoy(i){decoyItems.splice(i,1);renderDecoys();}
+document.getElementById('new-decoy-input').addEventListener('keydown',e=>{if(e.key==='Enter')addDecoy();});
+
+// ══ SETUP: PLAYERS ══
+function renderPlayers(){
+  document.getElementById('players-list').innerHTML=players.map((p,i)=>`
+    <div class="player-row">
+      <span class="player-num">${i+1}</span>
+      <input class="player-name-inp" value="${escHtml(p.name)}" oninput="players[${i}].name=this.value;save()" placeholder="ชื่อผู้เล่น / ฝ่าย" />
+      <div class="draws-ctrl">
+        <span class="draws-label">สิทธิ์</span>
+        <button class="mini-btn" onclick="changeDraws(${i},-1)">−</button>
+        <span class="draws-num" id="pdraws-${i}">${p.draws}</span>
+        <button class="mini-btn" onclick="changeDraws(${i},1)">+</button>
+      </div>
+      <button class="del-player" onclick="removePlayer(${i})">×</button>
+    </div>`).join('');save();
+}
+function addPlayer(){players.push({name:`ฝ่ายที่ ${players.length+1}`,draws:3});renderPlayers();}
+function removePlayer(i){players.splice(i,1);renderPlayers();}
+function changeDraws(i,d){players[i].draws=Math.max(1,players[i].draws+d);document.getElementById(`pdraws-${i}`).textContent=players[i].draws;save();}
+
+// ══ FULLSCREEN ══
+function toggleFullscreen(){
+  const el=document.documentElement;
+  if(!document.fullscreenElement){(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen).call(el);document.getElementById('fs-btn').textContent='✕';}
+  else{(document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen).call(document);document.getElementById('fs-btn').textContent='⛶';}
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('fs-btn').textContent='⛶';});
+
+// ══ CARD SIZING ══
+function calcCardSize(count){
+  const grid=document.getElementById('cards-grid');
+  const r=grid.getBoundingClientRect();
+  const W=r.width||window.innerWidth-28;
+  const H=r.height||window.innerHeight*0.55;
+  const GAP=8,RATIO=1.5;
+  let best={w:40,h:60};
+  for(let cols=1;cols<=count;cols++){
+    const rows=Math.ceil(count/cols);
+    const cw=Math.floor((W-(cols-1)*GAP)/cols);
+    const ch_max=Math.floor((H-(rows-1)*GAP)/rows);
+    const cw_fit=Math.min(cw,Math.floor(ch_max/RATIO));
+    const ch_fit=Math.floor(cw_fit*RATIO);
+    if(cw_fit>best.w) best={w:cw_fit,h:ch_fit};
+  }
+  best.w=Math.min(best.w,160);best.h=Math.min(best.h,240);
+  return best;
+}
+function applyCardSize(count){const{w,h}=calcCardSize(count);document.documentElement.style.setProperty('--cw',w+'px');document.documentElement.style.setProperty('--ch',h+'px');}
+
+// ══ START ══
+function startGame(){
+  if(allItems.length===0){alert('กรุณาเพิ่มการ์ดรางวัลก่อนนะ!');return;}
+  if(players.length===0){alert('กรุณาเพิ่มผู้เล่นก่อนนะ!');return;}
+  results=players.map(p=>({name:p.name,draws:p.draws,items:[]}));
+  currentTurn=0;showScreen('play');startTurn();
+}
+
+// ══ TURN ══
+// ══ TURN STATE ══
+// currentTurn = the live turn we're progressing through
+// viewingTurn = turn we're currently peeking at (-1 = live mode)
+let viewingTurn = -1;
+
+function startTurn(){
+  viewingTurn = -1;
+  const p=players[currentTurn]; maxFlips=p.draws;
+  const rewardCards=allItems.map(t=>({text:t,isDecoy:false,bonus:0}));
+  const decoyCards=decoyItems.map(d=>({text:d.text,isDecoy:true,bonus:d.bonus}));
+  deckForTurn=[...rewardCards,...decoyCards].sort(()=>Math.random()-.5);
+  flippedState=new Array(deckForTurn.length).fill(false); flippedCount=0;
+  playShuffle();
+  document.getElementById('turn-name').textContent=p.name;
+  document.getElementById('result-banner').style.display='none';
+  document.getElementById('reveal-all-btn').style.display='none';
+  document.getElementById('redraw-btn').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('cards-grid').classList.remove('view-mode');
+  renderPips(); renderCards();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    applyCardSize(deckForTurn.length); updateHint(); setTimeout(attachCardEvents,80); save();
+  }));
+}
+
+function renderPips(){
+  document.getElementById('players-progress').innerHTML=players.map((p,i)=>{
+    const isLive = i===currentTurn && viewingTurn===-1;
+    const isViewing = viewingTurn===i;
+    const played = results[i]&&Array.isArray(results[i]._deck)&&results[i]._deck.length>0;
+    if(isLive||isViewing) return `<div class="pip active">${escHtml(p.name)}</div>`;
+    if(played) return `<div class="pip done" onclick="jumpToTurn(${i})">${escHtml(p.name)} ↺</div>`;
+    return `<div class="pip" onclick="jumpToTurn(${i})">${escHtml(p.name)}</div>`;
+  }).join('');
+}
+
+// ── helpers ──────────────────────────────────────────────
+function hideActionBtns(){
+  document.getElementById('result-banner').style.display='none';
+  document.getElementById('reveal-all-btn').style.display='none';
+  document.getElementById('redraw-btn').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+}
+
+// Show a turn's cards in pure read-only view-mode (no live play).
+// Does NOT change currentTurn.
+function showViewTurn(i){
+  viewingTurn = i;
+  const r = results[i];
+  deckForTurn  = [...r._deck];
+  flippedState = r._flipped ? [...r._flipped] : new Array(deckForTurn.length).fill(false);
+  flippedCount = flippedState.filter(Boolean).length;
+  maxFlips     = players[i].draws;
+
+  document.getElementById('turn-name').textContent = players[i].name;
+  document.getElementById('cards-grid').classList.remove('view-mode');
+  renderPips();
+  renderCards();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    applyCardSize(deckForTurn.length);
+    deckForTurn.forEach((_,j)=>{
+      const el=document.getElementById(`card-${j}`); if(!el) return;
+      if(flippedState[j]){ el.classList.add('flipped'); el.classList.remove('disabled'); }
+      else               { el.classList.remove('flipped'); el.classList.add('disabled'); }
+    });
+    document.getElementById('cards-grid').classList.add('view-mode');
+  }));
+
+  // banner: show items
+  const r2 = results[i];
+  const itemsHtml = r2.items.length
+    ? r2.items.map(it=>`<span style="display:inline-block;margin:3px 4px;padding:4px 14px;border-radius:16px;font-size:13px;background:${it.isDecoy?'rgba(180,40,0,.1)':'rgba(200,146,10,.12)'};border:1px solid ${it.isDecoy?'#cc440088':'#c8920a88'};color:${it.isDecoy?'#8B1a00':'#5a3000'}">${escHtml(it.text)}${it.isDecoy?' 🎭':' ⭐'}</span>`).join('')
+    : '<span style="color:#b08040;font-family:Georgia;font-size:13px">ยังไม่ได้จับ</span>';
+  document.getElementById('result-text').innerHTML = `<strong>${escHtml(players[i].name)}</strong>&nbsp;|&nbsp;${itemsHtml}`;
+  document.getElementById('result-banner').style.display = 'block';
+  document.getElementById('reveal-all-btn').style.display = 'none';
+  document.getElementById('redraw-btn').style.display = '';
+  document.getElementById('next-btn').style.display = '';
+  document.getElementById('next-btn').textContent = '← กลับ';
+  updateHint();
+}
+
+// Restore the live currentTurn display (already played but returning from peek)
+function showLiveTurn(){
+  viewingTurn = -1;
+  const r = results[currentTurn];
+  document.getElementById('turn-name').textContent = players[currentTurn].name;
+  document.getElementById('cards-grid').classList.remove('view-mode');
+  renderPips();
+
+  if(r && Array.isArray(r._deck) && r._deck.length > 0){
+    // turn already has cards flipped — restore and show result
+    deckForTurn  = [...r._deck];
+    flippedState = [...(r._flipped || new Array(deckForTurn.length).fill(false))];
+    flippedCount = flippedState.filter(Boolean).length;
+    maxFlips     = players[currentTurn].draws + (r.extraFlips||0);
+    renderCards();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      applyCardSize(deckForTurn.length);
+      deckForTurn.forEach((_,j)=>{
+        const el=document.getElementById(`card-${j}`); if(!el) return;
+        if(flippedState[j]){ el.classList.add('flipped'); el.classList.remove('disabled'); }
+        else               { el.classList.remove('flipped'); el.classList.add('disabled'); }
+      });
+      document.getElementById('cards-grid').classList.add('view-mode');
+      updateHint();
+      // re-show the result banner
+      const p = players[currentTurn], isLast = currentTurn>=players.length-1;
+      const rc = results[currentTurn].items.filter(x=>!x.isDecoy).length;
+      const dc = results[currentTurn].items.filter(x=>x.isDecoy).length;
+      let txt = `${p.name} เปิดครบแล้ว!`;
+      if(dc>0) txt += `  (รางวัล ${rc} | หลอก ${dc})`;
+      document.getElementById('result-text').textContent = txt;
+      document.getElementById('result-banner').style.display = 'block';
+      document.getElementById('reveal-all-btn').style.display = '';
+      document.getElementById('redraw-btn').style.display = '';
+      document.getElementById('next-btn').style.display = '';
+      document.getElementById('next-btn').textContent = isLast ? 'ดูสรุปผล' : 'ถัดไป ➜';
+    }));
+  } else {
+    // turn not started yet
+    startTurn();
+  }
+}
+
+// ── navigation ────────────────────────────────────────────
+function jumpToTurn(i){
+  if(i===currentTurn && viewingTurn===-1) return;  // already live here
+  if(i===viewingTurn) return;                       // already peeking here
+
+  const played = results[i] && Array.isArray(results[i]._deck) && results[i]._deck.length>0;
+
+  if(!played){
+    // not yet played → make it the new live turn
+    viewingTurn = -1;
+    currentTurn = i;
+    if(!results[currentTurn]) results[currentTurn]={name:players[i].name,draws:players[i].draws,items:[]};
+    hideActionBtns();
+    startTurn();
+    return;
+  }
+
+  // already played → peek (always allowed, no lock)
+  showViewTurn(i);
+}
+
+function redrawCurrent(){
+  if(splashActive){ dismissSplash(); return; } // dismiss splash first, let user tap again
+  const target = viewingTurn!==-1 ? viewingTurn : currentTurn;
+  if(target < 0 || target >= players.length) return;
+  const ok = window.confirm(`จับใหม่สำหรับ "${players[target].name}" ใช่ไหม?\nผลเดิมจะถูกลบทั้งหมด`);
+  if(!ok) return;
+  results[target] = {name:players[target].name, draws:players[target].draws, items:[], _deck:null, _flipped:null};
+  viewingTurn = -1;
+  currentTurn = target;
+  hideActionBtns();
+  document.getElementById('cards-grid').classList.remove('view-mode');
+  startTurn();
+}
+
+function checkTurnDone(){
+  if(flippedCount>=maxFlips){
+    if(splashActive){
+      // wait for splash to finish, then show result
+      const orig = splashDoneCallback;
+      splashDoneCallback = ()=>{ if(orig) orig(); setTimeout(showTurnResult,300); };
+    } else {
+      setTimeout(showTurnResult,450);
+    }
+  }
+}
+
+function showTurnResult(){
+  playWin();
+  document.getElementById('cards-grid').classList.add('view-mode');
+  const p=players[currentTurn], isLast=currentTurn>=players.length-1;
+  const rc=results[currentTurn].items.filter(x=>!x.isDecoy).length;
+  const dc=results[currentTurn].items.filter(x=>x.isDecoy).length;
+  let txt=`${p.name} เปิดครบแล้ว!`;
+  if(dc>0) txt+=`  (รางวัล ${rc} | หลอก ${dc})`;
+  document.getElementById('result-text').textContent=txt;
+  document.getElementById('result-banner').style.display='block';
+  document.getElementById('reveal-all-btn').style.display='';
+  document.getElementById('redraw-btn').style.display='';
+  document.getElementById('next-btn').style.display='';
+  document.getElementById('next-btn').textContent=isLast?'ดูสรุปผล':'ถัดไป ➜';
+  save();
+}
+
+function nextTurn(){
+  if(viewingTurn!==-1){
+    // peeking at old turn → go back to live currentTurn
+    showLiveTurn();
+    return;
+  }
+  // normal advance to next player
+  hideActionBtns();
+  document.getElementById('cards-grid').classList.remove('view-mode');
+  currentTurn++;
+  if(currentTurn>=players.length){showSummary();return;}
+  startTurn();
+}
+
+function restoreFlipped(){
+  deckForTurn.forEach((_,i)=>{
+    if(flippedState[i]){const el=document.getElementById(`card-${i}`);if(el){el.classList.add('flipped');el.style.animationDuration='0s';}}
   });
+  if(flippedCount>=maxFlips){
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.add('disabled');}});
+  }
+}
+
+// ══ RENDER CARDS ══
+const THEMES=[
+  {bc:'#c8920a',ac:'#8B5E00'},{bc:'#2e7d32',ac:'#1b5e20'},
+  {bc:'#1565c0',ac:'#0d47a1'},{bc:'#6a1a80',ac:'#4a0060'},
+  {bc:'#bf360c',ac:'#8B1a00'},{bc:'#00695c',ac:'#004d40'},
+];
+function renderCards(){
+  document.getElementById('cards-grid').innerHTML=deckForTurn.map((card,i)=>{
+    const th=THEMES[i%THEMES.length];
+    const ab=card.isDecoy?'#cc4400':th.bc;
+    const ac=card.isDecoy?'#8B1a00':th.ac;
+    const len=card.text.length;
+    const sz=len>20?'xs':len>10?'sm':'';
+    const df=card.isDecoy?'decoy':'';
+    const dt=card.isDecoy?'decoy-text':'';
+    return `<div class="card-wrapper" id="card-${i}" style="animation-delay:${i*70}ms">
+      <div class="card-flash"></div>
+      <div class="card-inner" id="inner-${i}">
+        <div class="card-face card-back">
+          <span class="tl-mark">${i+1}</span>
+          <span class="card-number">${i+1}</span>
+          <span class="card-back-label">CARD</span>
+          <span class="br-mark">${i+1}</span>
+        </div>
+        <div class="card-face card-front ${df}" style="--accent-border:${ab};--accent-color:${ac}">
+          <span class="cf-num">${i+1}</span>
+          <span class="cf-main ${sz} ${dt}">${escHtml(card.text)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══ CONFETTI ══
+const confCanvas=document.getElementById('confetti-canvas');
+const confCtx=confCanvas.getContext('2d');
+let confParticles=[],confRAF=null;
+function resizeConf(){confCanvas.width=innerWidth;confCanvas.height=innerHeight;}
+window.addEventListener('resize',resizeConf);resizeConf();
+function launchConfetti(){
+  resizeConf();
+  const COLORS=['#ffd700','#ff6b6b','#4ecdc4','#45b7d1','#f9ca24','#f0932b','#eb4d4b','#6ab04c','#e056fd','#fff'];
+  for(let i=0;i<160;i++){
+    const ang=Math.random()*Math.PI*2,spd=4+Math.random()*10;
+    confParticles.push({x:innerWidth/2,y:innerHeight*0.45,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-6,w:6+Math.random()*8,h:4+Math.random()*6,rot:Math.random()*360,rotV:(Math.random()-.5)*10,color:COLORS[Math.floor(Math.random()*COLORS.length)],alpha:1,life:1});
+  }
+  if(!confRAF) animConf();
+}
+function animConf(){
+  confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  confParticles=confParticles.filter(p=>p.alpha>0.02);
+  confParticles.forEach(p=>{
+    p.vy+=0.25;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;
+    p.life-=0.012;p.alpha=Math.max(0,p.life);
+    confCtx.save();confCtx.globalAlpha=p.alpha;confCtx.translate(p.x,p.y);confCtx.rotate(p.rot*Math.PI/180);
+    confCtx.fillStyle=p.color;confCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);confCtx.restore();
+  });
+  if(confParticles.length>0) confRAF=requestAnimationFrame(animConf);
+  else{confRAF=null;confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);}
+}
+
+// ══ REWARD SPLASH ══
+let splashActive = false;
+let splashDoneCallback = null;
+
+function dismissSplash(){
+  if(!splashActive) return;
+  splashActive = false;
+  document.getElementById('reward-splash').classList.remove('active');
+  if(splashDoneCallback){ const cb=splashDoneCallback; splashDoneCallback=null; cb(); }
+}
+
+function showRewardSplash(text, onDone){
+  document.getElementById('splash-text').textContent = text;
+  splashActive = true;
+  splashDoneCallback = onDone;
+  document.getElementById('reward-splash').classList.add('active');
+  launchConfetti();
+  // auto-dismiss after 2.5s if user doesn't tap
+  setTimeout(dismissSplash, 2500);
+}
+
+document.getElementById('reward-splash').addEventListener('click', dismissSplash);
+document.getElementById('reward-splash').addEventListener('touchend', e=>{ e.preventDefault(); dismissSplash(); });
+
+// ══ NEWS TICKER ══
+let tickerHistory=[];
+function addTickerItem(team,text,isDecoy){tickerHistory.push({team,text,isDecoy});updateTicker();}
+function updateTicker(){
+  if(!tickerHistory.length) return;
+  document.getElementById('news-ticker').classList.add('active');
+  const items=[...tickerHistory,...tickerHistory];
+  document.getElementById('ticker-track').innerHTML=items.map(h=>`<span class="ticker-item"><span class="ticker-team">${escHtml(h.team)}</span><span style="color:#c8920a">›</span><span class="${h.isDecoy?'ticker-decoy':'ticker-reward'}">${escHtml(h.text)}${h.isDecoy?' 🎭':' ⭐'}</span><span class="ticker-sep">❖</span></span>`).join('');
+  const spd=Math.max(20,document.getElementById('ticker-track').scrollWidth/2/80);
+  document.getElementById('ticker-track').style.animationDuration=spd+'s';
+}
+function clearTicker(){tickerHistory=[];document.getElementById('news-ticker').classList.remove('active');document.getElementById('ticker-track').innerHTML='';}
+
+// ══ DRAG-TO-REVEAL OVERLAY ══
+let overlayCardIndex=-1,dragStartY=0,dragStartX=0,dragPct=0,overlayRevealed=false,isDragging=false;
+
+function openOverlay(i){
+  if(splashActive) return;
+  if(document.getElementById('cards-grid').classList.contains('view-mode')) return;
+  if(flippedState[i]||flippedCount>=maxFlips) return;
+  overlayCardIndex=i;overlayRevealed=false;dragPct=0;isDragging=false;
+  const card=deckForTurn[i],num=i+1,len=card.text.length;
+  const szCls=len>20?'xs':len>10?'sm':'';
+  document.getElementById('ov-num-tl').textContent=num;
+  document.getElementById('ov-num').textContent=num;
+  document.getElementById('ov-num-br').textContent=num;
+  const ab=card.isDecoy?'#cc4400':'#c8920a';
+  const ac=card.isDecoy?'#8B1a00':'#8B5E00';
+  const front=document.getElementById('ov-front');
+  front.style.setProperty('--accent-border',ab);
+  front.style.setProperty('--accent-color',ac);
+  front.className='card-face card-front'+(card.isDecoy?' decoy':'');
+  document.getElementById('ov-cf-num').textContent=num;
+  const mainEl=document.getElementById('ov-cf-main');
+  mainEl.textContent=card.text;
+  mainEl.className='cf-main '+szCls+(card.isDecoy?' decoy-text':'');
+  const inner=document.getElementById('overlay-inner');
+  inner.classList.remove('snap-open');inner.style.transform='rotateY(0deg)';inner.style.transition='none';
+  document.getElementById('drag-hint').style.opacity='1';
+  document.getElementById('overlay-actions').classList.remove('active');
+  document.getElementById('card-overlay').classList.add('active');
+}
+
+function onOverlayMove(cx,cy){
+  if(overlayRevealed||!isDragging) return;
+  const dy=dragStartY-cy,dx=cx-dragStartX;
+  const drag=Math.max(dy,dx*0.6);
+  dragPct=Math.max(0,Math.min(1,drag/120));
+  const inner=document.getElementById('overlay-inner');
+  inner.style.transition='none';inner.style.transform=`rotateY(${dragPct*180}deg)`;
+  document.getElementById('drag-hint').style.opacity=String(Math.max(0,1-dragPct*2));
+  if(dragPct>=1) finishReveal();
+}
+function onOverlayMouseMove(e){onOverlayMove(e.clientX,e.clientY);}
+function onOverlayDragTouch(e){if(!isDragging)return;e.preventDefault();onOverlayMove(e.touches[0].clientX,e.touches[0].clientY);}
+
+function onOverlayRelease(){
+  if(!isDragging) return;isDragging=false;
+  if(overlayRevealed) return;
+  if(dragPct>=0.52) finishReveal();
+  else{
+    const inner=document.getElementById('overlay-inner');
+    inner.style.transition='transform .35s cubic-bezier(.2,.8,.3,1)';
+    inner.style.transform='rotateY(0deg)';dragPct=0;
+    document.getElementById('drag-hint').style.opacity='1';
+  }
+}
+
+function finishReveal(){
+  if(overlayRevealed) return;overlayRevealed=true;
+  const inner=document.getElementById('overlay-inner');
+  inner.classList.add('snap-open');
+  document.getElementById('drag-hint').style.opacity='0';
+  const card=deckForTurn[overlayCardIndex];
+  card.isDecoy?playDecoy():playReveal();
+  const oc=document.getElementById('overlay-card');
+  setTimeout(()=>{oc.classList.add('flash-anim');},300);
+  setTimeout(()=>{oc.classList.remove('flash-anim');},900);
+  setTimeout(()=>{document.getElementById('overlay-actions').classList.add('active');},700);
+}
+
+function confirmReveal(){
+  document.getElementById('overlay-actions').classList.remove('active');
+  const card=deckForTurn[overlayCardIndex];
+  const playerName=players[currentTurn].name;
+  closeOverlay();
+  if(!card.isDecoy){
+    showRewardSplash(card.text,()=>{doReveal(overlayCardIndex);});
+    addTickerItem(playerName,card.text,false);
+  } else {
+    addTickerItem(playerName,card.text,true);
+    doReveal(overlayCardIndex);
+  }
+}
+
+function rerollReveal(){
+  document.getElementById('overlay-actions').classList.remove('active');
+  closeOverlay();
+  const unflipped=deckForTurn.filter((_,i)=>!flippedState[i]);
+  const shuffled=[...unflipped].sort(()=>Math.random()-.5);
+  let ui=0;deckForTurn=deckForTurn.map((c,i)=>flippedState[i]?c:shuffled[ui++]);
+  playShuffle();renderCards();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    applyCardSize(deckForTurn.length);restoreFlipped();setTimeout(attachCardEvents,80);
+  }));
+}
+
+function closeOverlay(){document.getElementById('card-overlay').classList.remove('active');isDragging=false;}
+
+// single overlay mousedown listener
+document.getElementById('card-overlay').addEventListener('mousedown',e=>{
+  if(overlayRevealed) return;
+  if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
+  isDragging=true;dragStartY=e.clientY;dragStartX=e.clientX;dragPct=0;
+});
+document.getElementById('card-overlay').addEventListener('touchstart',e=>{
+  if(overlayRevealed) return;
+  if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
+  isDragging=true;dragStartY=e.touches[0].clientY;dragStartX=e.touches[0].clientX;dragPct=0;
+},{passive:true});
+
+document.addEventListener('mousemove',onOverlayMouseMove);
+document.addEventListener('mouseup',onOverlayRelease);
+document.addEventListener('touchmove',onOverlayDragTouch,{passive:false});
+document.addEventListener('touchend',onOverlayRelease);
+
+function attachCardEvents(){
+  deckForTurn.forEach((_,i)=>{
+    const el=document.getElementById(`card-${i}`);
+    if(!el||flippedState[i]) return;
+    const onDown=e=>{if(flippedState[i]||flippedCount>=maxFlips)return;e.preventDefault();openOverlay(i);};
+    el.addEventListener('mousedown',onDown);
+    el.addEventListener('touchstart',onDown,{passive:false});
+  });
+}
+
+function doReveal(i){
+  const el=document.getElementById(`card-${i}`);
+  if(!el||flippedState[i]) return;
+  flippedState[i]=true;flippedCount++;
+  // snapshot deck on first flip so we can review later
+  if(flippedCount===1 && results[currentTurn]) results[currentTurn]._deck=[...deckForTurn];
+  const card=deckForTurn[i];
+  results[currentTurn].items.push(card);
+  if(card.isDecoy){
+    maxFlips+=card.bonus;
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.remove('disabled');}});
+    showBonusToast(card.bonus);
+  }
+  el.classList.add('flipped');
+  if(flippedCount>=maxFlips){
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.add('disabled');}});
+  }
+  updateHint();
+  // snapshot flipped state for review
+  if(results[currentTurn]) results[currentTurn]._flipped=[...flippedState];
+  save();checkTurnDone();
+}
+
+function revealAll(){
+  document.getElementById('reveal-all-btn').style.display='none';
+  deckForTurn.forEach((_,i)=>{
+    if(!flippedState[i]){
+      setTimeout(()=>{
+        const el=document.getElementById(`card-${i}`);if(!el)return;
+        el.classList.remove('disabled');flippedState[i]=true;el.classList.add('flipped');
+        setTimeout(()=>{el.classList.add('flash-anim');},200);
+        setTimeout(()=>{el.classList.remove('flash-anim');},700);
+      },i*70);
+    }
+  });
+  // update snapshot after all cards flip
+  setTimeout(()=>{
+    if(results[currentTurn]){
+      if(!results[currentTurn]._deck || !results[currentTurn]._deck.length)
+        results[currentTurn]._deck = [...deckForTurn];
+      results[currentTurn]._flipped = new Array(deckForTurn.length).fill(true);
+    }
+    document.getElementById('cards-grid').classList.add('view-mode');
+    save();
+  }, deckForTurn.length*70 + 300);
+}
+
+function updateHint(){
+  document.getElementById('turn-draws').textContent=`สิทธิ์ ${flippedCount}/${maxFlips}`;
+  document.getElementById('cards-hint').textContent=flippedCount>=maxFlips?'✨ เปิดครบแล้ว!':'กดที่การ์ดแล้วลากขึ้นเพื่อเปิด';
+}
+
+
+function goSetup(){showScreen('setup');}
+
+function showSummary(){
+  showScreen('summary');
+  document.getElementById('summary-list').innerHTML=results.map(r=>`
+    <div class="summary-card">
+      <div class="summary-player">${escHtml(r.name)}<span class="summary-badge">${r.draws} สิทธิ์</span></div>
+      <div class="summary-items">
+        ${r.items.length?r.items.map(it=>`<span class="summary-item${it.isDecoy?' decoy':''}">${escHtml(it.text)}${it.isDecoy?' (หลอก)':''}</span>`).join(''):'<span style="color:#b08040;font-size:13px;font-family:Georgia">ไม่มีรางวัล</span>'}
+      </div>
+    </div>`).join('');
+}
+
+function showBonusToast(bonus){
+  const t=document.getElementById('bonus-toast');
+  t.textContent=`+${bonus} สิทธิ์!`;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function playAgain(){
+  results=players.map(p=>({name:p.name,draws:p.draws,items:[]}));
+  currentTurn=0;clearTicker();showScreen('play');startTurn();
+}
+function resetAll(){results=[];currentTurn=0;clearTicker();showScreen('setup');}
+
+window.addEventListener('resize',()=>{
+  if(currentScreen==='play'&&deckForTurn.length>0) requestAnimationFrame(()=>applyCardSize(deckForTurn.length));
 });
 
-
-// preview
-fileInput.addEventListener("change",()=>{
-
-const f=fileInput.files[0];
-if(!f) return;
-
-if(!["image/jpeg","image/png"].includes(f.type)){
- showPopup("อนุญาตเฉพาะ JPG หรือ PNG");
- fileInput.value="";
- return;
+// ══ INIT ══
+const restored=load();
+if(restored){
+  renderItems();renderDecoys();renderPlayers();
+  document.getElementById('new-decoy-bonus').textContent=newDecoyBonus;
+  if(currentScreen==='play'){
+    showScreen('play');
+    document.getElementById('turn-name').textContent=players[currentTurn]?.name||'';
+    renderPips();renderCards();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      applyCardSize(deckForTurn.length);restoreFlipped();updateHint();
+      setTimeout(attachCardEvents,80);
+      if(flippedCount>=maxFlips&&maxFlips>0) showTurnResult();
+    }));
+  } else if(currentScreen==='summary'){showScreen('summary');showSummary();}
+  else showScreen('setup');
+} else {
+  allItems=["สมบัติทองคำ","แผนที่ลับ","ขวดรัม","นกแก้ว","ปืนคาบศิลา","กระดูกไขว้","เรือใบ","ดาบคัตลาส"];
+  decoyItems=[{text:"ยังไม่ใช่นะ!",bonus:1},{text:"โชคไม่ดี เลือกใหม่ 2 ใบ!",bonus:2}];
+  players=[{name:'ฝ่ายที่ 1',draws:3},{name:'ฝ่ายที่ 2',draws:2}];
+  renderItems();renderDecoys();renderPlayers();showScreen('setup');
 }
-
-if(f.size>10*1024*1024){
- showPopup("ไฟล์ต้องไม่เกิน 10MB");
- fileInput.value="";
- return;
-}
-
-preview.src=URL.createObjectURL(f);
-preview.style.display="block";
-
-});
-
-
-// click
-btn.addEventListener("click",()=>{
-
-if(!firstname.value || !lastname.value || !position.value || !rank.value || !fileInput.files[0]){
- showPopup("กรุณากรอกข้อมูลให้ครบ");
- return;
-}
-
-showConfirmPopup();
-
-});
-
-
-// upload
-async function upload(){
-
-try{
-
-btn.disabled=true;
-loading.style.display="flex";
-
-const f=fileInput.files[0];
-const reader=new FileReader();
-
-reader.onload=async ()=>{
-
-try{
-
-await fetch(API_URL,{
-method:"POST",
-body:JSON.stringify({
-firstname:firstname.value.trim(),
-lastname:lastname.value.trim(),
-position:position.value,
-rank:rank.value,
-file:reader.result.split(",")[1],
-mimeType:f.type
-})
-});
-
-loading.style.display="none";
-btn.disabled=false;
-
-showPopup("อัปโหลดสำเร็จ!");
-
-preview.style.display="none";
-firstname.value="";
-lastname.value="";
-rank.value="";
-position.value="";
-fileInput.value="";
-
-}catch(err){
-
-loading.style.display="none";
-btn.disabled=false;
-
-showPopup("เกิดข้อผิดพลาดในการอัปโหลด");
-console.error(err);
-
-}
-
-};
-
-reader.readAsDataURL(f);
-
-}catch(err){
-
-loading.style.display="none";
-btn.disabled=false;
-showPopup("ระบบขัดข้อง");
-
-}
-
-}
-
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
