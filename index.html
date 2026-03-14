@@ -29,14 +29,14 @@ body{
     radial-gradient(ellipse at 20% 10%,#ffe8a0 0%,transparent 50%),
     radial-gradient(ellipse at 80% 90%,#f0d49a 0%,transparent 50%);
   overflow:hidden;flex-direction:column;
-  padding:8px 12px 0;gap:5px;
+  padding:6px 10px 0;gap:4px;
 }
 #play-screen.active{display:flex;}
 
-.play-topbar{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.play-topbar{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .players-progress{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
 .pip{
-  padding:5px 14px;border-radius:20px;font-size:11px;letter-spacing:1px;
+  padding:4px 12px;border-radius:20px;font-size:11px;letter-spacing:1px;
   border:1px solid #cc220066;color:#cc2200;background:rgba(200,30,0,0.07);
   transition:all .25s;white-space:nowrap;cursor:pointer;
   -webkit-tap-highlight-color:transparent;
@@ -50,7 +50,6 @@ body{
 .pip.done{
   background:rgba(160,20,0,0.12);color:#8B1a00;
   border:1px solid #aa220088;opacity:.75;cursor:pointer;
-  text-decoration:none;
 }
 .pip.done:hover{opacity:1;background:rgba(160,20,0,0.22);border-color:#cc2200;}
 
@@ -58,33 +57,38 @@ body{
 .turn-header-row{
   display:flex;align-items:center;gap:8px;
   background:linear-gradient(160deg,#fffaf0,#fdf3dc);
-  border:2px solid #c8920a;border-radius:10px;padding:6px 14px;
+  border:2px solid #c8920a;border-radius:10px;padding:5px 12px;
   box-shadow:0 3px 14px rgba(120,60,0,0.1);flex-shrink:0;overflow:hidden;
 }
-.turn-label{font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#a07040;white-space:nowrap;flex-shrink:0;}
-.turn-name {font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);color:#7a3e00;white-space:nowrap;flex-shrink:0;font-weight:700;}
-.turn-draws{font-family:'Cinzel',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#b08040;white-space:nowrap;flex-shrink:0;}
-.turn-hint{font-family:'Cinzel',serif;font-size:clamp(9px,1.8vw,18px);letter-spacing:1px;color:#a07040;text-align:right;margin-left:auto;white-space:nowrap;flex-shrink:0;}
+.turn-label{font-family:'Cinzel Decorative',serif;font-size:clamp(9px,1.8vw,16px);letter-spacing:1px;color:#a07040;white-space:nowrap;flex-shrink:0;}
+.turn-name {font-family:'Cinzel Decorative',serif;font-size:clamp(9px,1.8vw,16px);color:#7a3e00;white-space:nowrap;flex-shrink:0;font-weight:700;}
+.turn-draws{font-family:'Cinzel',serif;font-size:clamp(9px,1.8vw,16px);letter-spacing:1px;color:#b08040;white-space:nowrap;flex-shrink:0;}
+.turn-hint{font-family:'Cinzel',serif;font-size:clamp(8px,1.4vw,14px);letter-spacing:1px;color:#a07040;text-align:right;margin-left:auto;white-space:nowrap;flex-shrink:0;}
 
-/* cards grid */
+/* ── CARDS GRID: ให้ flex:1 และ min-height:0 เพื่อรับพื้นที่เหลือ ── */
 .cards-grid{
-  display:flex;flex-wrap:wrap;gap:8px;
+  display:flex;flex-wrap:wrap;gap:6px;
   justify-content:center;align-content:center;
   flex:1;min-height:0;overflow:hidden;
+  padding:2px 0;
 }
 
+/* ── CARD: ใช้ aspect-ratio แทน height คงที่ ── */
 .card-wrapper{
   perspective:1000px;
-  width:var(--cw,110px);height:var(--ch,165px);
-  cursor:pointer;animation:cardDrop .4s ease-out both;
-  user-select:none;-webkit-user-select:none;position:relative;flex-shrink:0;
+  width:var(--cw,100px);
+  aspect-ratio:2/3;           /* << สัดส่วนตายตัว 2:3 เสมอ */
+  cursor:pointer;
+  animation:cardDrop .4s ease-out both;
+  user-select:none;-webkit-user-select:none;
+  position:relative;flex-shrink:0;
 }
 @keyframes cardDrop{
   from{opacity:0;transform:translateY(28px) scale(.85) rotate(-5deg);}
   to  {opacity:1;transform:translateY(0) scale(1) rotate(0);}
 }
 .card-inner{
-  position:relative;width:100%;height:100%;
+  position:absolute;inset:0;          /* เต็มพื้นที่ wrapper */
   transform-style:preserve-3d;transition:transform .05s linear;
 }
 .card-wrapper.flipped .card-inner{
@@ -97,7 +101,7 @@ body{
 .card-wrapper.flipped{cursor:default;}
 .card-wrapper.disabled:not(.flipped){opacity:.35;cursor:not-allowed;}
 
-/* ── VIEW MODE (after reveal / looking back) ── */
+/* ── VIEW MODE ── */
 .cards-grid.view-mode .card-wrapper.flipped .card-front{
   background:linear-gradient(160deg,#ffffff,#f8f8f8) !important;
   border-color:#c8920a !important;
@@ -116,8 +120,7 @@ body{
 .cards-grid.view-mode .card-wrapper:not(.flipped) .card-back-label,
 .cards-grid.view-mode .card-wrapper:not(.flipped) .tl-mark,
 .cards-grid.view-mode .card-wrapper:not(.flipped) .br-mark{
-  color:#888 !important;
-  text-shadow:none !important;
+  color:#888 !important;text-shadow:none !important;
 }
 .cards-grid.view-mode .card-wrapper:not(.flipped){
   opacity:1 !important;cursor:default !important;
@@ -137,7 +140,8 @@ body{
 
 #overlay-card{
   position:relative;
-  width:clamp(140px,38vw,260px);height:clamp(210px,57vw,390px);
+  width:clamp(130px,32vw,240px);
+  aspect-ratio:2/3;             /* << overlay card ก็ใช้ aspect-ratio */
   perspective:1200px;
   user-select:none;-webkit-user-select:none;
   animation:overlayPop .35s cubic-bezier(.2,1.3,.4,1) both;
@@ -148,7 +152,6 @@ body{
   to  {transform:scale(1) translateY(0);opacity:1;}
 }
 
-/* overlay action buttons — right on wide, below on mobile */
 #overlay-actions{
   display:none;flex-direction:column;gap:14px;align-items:center;
   animation:splashPop .4s cubic-bezier(.2,1.3,.4,1) both;
@@ -168,7 +171,7 @@ body{
 #btn-reroll {background:linear-gradient(145deg,#6a006a,#b020b0);color:#fff;box-shadow:0 5px 18px rgba(120,0,120,.45);}
 
 #overlay-inner{
-  position:relative;width:100%;height:100%;
+  position:absolute;inset:0;
   transform-style:preserve-3d;transform:rotateY(0deg);transition:none;
 }
 #overlay-inner.snap-open{
@@ -179,17 +182,17 @@ body{
 #overlay-card .card-face{border-radius:18px;}
 #overlay-card .card-back{border-radius:18px;}
 #overlay-card .card-front{border-radius:18px;}
-#overlay-card .card-number{font-size:clamp(60px,18vw,120px);}
+#overlay-card .card-number{font-size:clamp(50px,14vw,100px);}
 #overlay-card .card-back-label{font-size:clamp(9px,2vw,14px);letter-spacing:4px;}
-#overlay-card .tl-mark,#overlay-card .br-mark{font-size:clamp(14px,3vw,22px);}
-#overlay-card .cf-num{font-size:clamp(12px,3vw,20px);}
-#overlay-card .cf-main{font-size:clamp(16px,5vw,32px);}
-#overlay-card .cf-main.sm{font-size:clamp(13px,4vw,26px);}
-#overlay-card .cf-main.xs{font-size:clamp(11px,3.2vw,20px);}
+#overlay-card .tl-mark,#overlay-card .br-mark{font-size:clamp(13px,2.5vw,20px);}
+#overlay-card .cf-num{font-size:clamp(11px,2.5vw,18px);}
+#overlay-card .cf-main{font-size:clamp(14px,4vw,28px);}
+#overlay-card .cf-main.sm{font-size:clamp(12px,3.2vw,22px);}
+#overlay-card .cf-main.xs{font-size:clamp(10px,2.8vw,18px);}
 
 #drag-hint{
-  position:absolute;bottom:-48px;left:50%;transform:translateX(-50%);
-  color:rgba(255,220,100,.85);font-size:13px;letter-spacing:2px;
+  position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);
+  color:rgba(255,220,100,.85);font-size:12px;letter-spacing:2px;
   font-family:'Cinzel',serif;text-align:center;pointer-events:none;
   animation:hintBob .9s ease-in-out infinite alternate;
 }
@@ -234,18 +237,18 @@ body{
 }
 .card-number{
   font-family:'Cinzel Decorative',serif;
-  font-size:calc(var(--cw,110px)*0.5);
+  font-size:calc(var(--cw,100px)*0.48);
   font-weight:700;color:#c8920a;
   text-shadow:2px 3px 0 rgba(120,60,0,.2);
   line-height:1;position:relative;z-index:1;
 }
 .card-back-label{
-  font-size:calc(var(--cw,110px)*0.07);
+  font-size:calc(var(--cw,100px)*0.07);
   letter-spacing:3px;color:#c8a050;margin-top:5px;
   position:relative;z-index:1;font-family:'Cinzel',serif;
 }
-.card-back .tl-mark{position:absolute;top:7px;left:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;}
-.card-back .br-mark{position:absolute;bottom:7px;right:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;transform:rotate(180deg);}
+.card-back .tl-mark{position:absolute;top:6px;left:8px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,100px)*.11);color:#c8920a;opacity:.5;}
+.card-back .br-mark{position:absolute;bottom:6px;right:8px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,100px)*.11);color:#c8920a;opacity:.5;transform:rotate(180deg);}
 
 .card-front{
   transform:rotateY(180deg);
@@ -261,32 +264,32 @@ body{
 .card-front.decoy{background:linear-gradient(160deg,#fff8f5,#fff0e8);border-color:#cc4400;}
 .card-front.decoy::before{border-color:#cc4400;opacity:.28;}
 .cf-num{
-  position:absolute;top:7px;left:9px;
+  position:absolute;top:6px;left:8px;
   font-family:'Cinzel Decorative',serif;
-  font-size:calc(var(--cw,110px)*.11);
+  font-size:calc(var(--cw,100px)*.11);
   color:var(--accent-color);opacity:.6;
 }
 .cf-main{
-  font-family:'Cinzel',serif;font-size:calc(var(--cw,110px)*.13);
+  font-family:'Cinzel',serif;font-size:calc(var(--cw,100px)*.13);
   font-weight:700;text-align:center;color:#2a1400;
-  line-height:1.3;padding:0 8px;letter-spacing:.3px;
+  line-height:1.3;padding:0 7px;letter-spacing:.3px;
 }
-.cf-main.sm{font-size:calc(var(--cw,110px)*.11);}
-.cf-main.xs{font-size:calc(var(--cw,110px)*.09);}
+.cf-main.sm{font-size:calc(var(--cw,100px)*.11);}
+.cf-main.xs{font-size:calc(var(--cw,100px)*.09);}
 .cf-main.decoy-text{color:#8B1a00;}
 
 /* bottom action bar */
 .play-actions{
   display:flex;gap:8px;justify-content:center;flex-wrap:wrap;flex-shrink:0;
-  padding-bottom:46px;position:relative;z-index:400;
+  padding-bottom:44px;position:relative;z-index:400;
 }
 
 .result-banner{
   background:linear-gradient(145deg,rgba(200,146,10,.15),rgba(200,146,10,.05));
-  border:2px solid #c8920a;border-radius:12px;padding:10px 18px;
+  border:2px solid #c8920a;border-radius:10px;padding:8px 14px;
   text-align:center;animation:cardDrop .4s ease-out;flex-shrink:0;
 }
-.result-banner p{font-family:'Cinzel Decorative',serif;font-size:clamp(11px,2vw,14px);letter-spacing:2px;color:#7a3e00;}
+.result-banner p{font-family:'Cinzel Decorative',serif;font-size:clamp(10px,1.6vw,13px);letter-spacing:2px;color:#7a3e00;}
 
 /* setup & summary */
 .header{text-align:center;padding:32px 16px 18px;}
@@ -340,30 +343,27 @@ body{
 .start-btn:hover::before{transform:translateX(100%);}
 .start-btn:hover{transform:translateY(-2px);}
 
-/* fullscreen btn — above ticker */
 #fs-btn{
-  position:fixed;bottom:50px;right:14px;z-index:500;
+  position:fixed;bottom:46px;right:14px;z-index:500;
   background:rgba(200,146,10,.9);border:none;border-radius:50%;
-  width:42px;height:42px;cursor:pointer;
+  width:40px;height:40px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 3px 14px rgba(0,0,0,.25);transition:all .2s;font-size:18px;color:#fff;
 }
 #fs-btn:hover{background:#c8920a;transform:scale(1.1);}
 
-/* confetti */
 #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:400;}
 
-/* reward splash */
 #reward-splash{display:none;position:fixed;inset:0;z-index:350;align-items:center;justify-content:center;pointer-events:none;
   background:rgba(20,5,0,0);transition:background .3s;}
 #reward-splash.active{display:flex;background:rgba(20,5,0,0.45);pointer-events:all;cursor:pointer;}
-#reward-splash.active::after{content:'แตะเพื่อปิด';position:absolute;bottom:clamp(60px,10vh,100px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:clamp(11px,2vw,15px);letter-spacing:3px;color:rgba(255,220,120,.7);pointer-events:none;animation:hintBob .9s ease-in-out infinite alternate;}
+#reward-splash.active::after{content:'แตะเพื่อปิด';position:absolute;bottom:clamp(55px,8vh,90px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:clamp(11px,2vw,15px);letter-spacing:3px;color:rgba(255,220,120,.7);pointer-events:none;animation:hintBob .9s ease-in-out infinite alternate;}
 #reward-splash-inner{
   text-align:center;animation:splashPop .55s cubic-bezier(.2,1.4,.4,1) both;
   background:rgba(0,0,0,0.55);
   border:2px solid rgba(255,200,80,.4);
   border-radius:24px;
-  padding:clamp(20px,4vw,48px) clamp(28px,6vw,72px);
+  padding:clamp(18px,3vw,44px) clamp(24px,5vw,64px);
   backdrop-filter:blur(6px);
   box-shadow:0 8px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
 }
@@ -380,7 +380,7 @@ body{
 }
 .splash-text{
   font-family:'Cinzel Decorative',serif;
-  font-size:clamp(26px,7vw,80px);
+  font-size:clamp(24px,6vw,72px);
   color:#fff;font-weight:700;line-height:1.15;
   text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 40px rgba(255,200,60,.8),0 0 80px rgba(255,160,0,.4);
   animation:splashGlow 1s ease-in-out infinite alternate;
@@ -390,9 +390,8 @@ body{
   to  {text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 50px rgba(255,230,80,1), 0 0 100px rgba(255,200,0,.6);}
 }
 
-/* news ticker */
 #news-ticker{
-  position:fixed;bottom:0;left:0;right:0;z-index:300;height:38px;
+  position:fixed;bottom:0;left:0;right:0;z-index:300;height:36px;
   background:linear-gradient(90deg,rgba(80,20,0,.93),rgba(120,50,0,.93),rgba(80,20,0,.93));
   border-top:2px solid #c8920a;overflow:hidden;display:none;
   box-shadow:0 -3px 20px rgba(0,0,0,.35);align-items:center;
@@ -406,7 +405,6 @@ body{
 .ticker-decoy{color:#fca5a5;}
 .ticker-sep{color:#c8920a55;margin:0 6px;font-size:18px;}
 
-/* bonus toast */
 #bonus-toast{
   position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.7);
   background:linear-gradient(145deg,#8B1a00,#cc3300);
@@ -419,7 +417,6 @@ body{
 @keyframes toastPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes toastFade{from{opacity:1}to{opacity:0}}
 
-/* summary */
 .summary-card{background:linear-gradient(160deg,#fffaf0,#fdf3dc);border:2px solid #c8920a;border-radius:14px;padding:16px 20px;margin-bottom:12px;box-shadow:0 4px 14px rgba(120,60,0,.1);}
 .summary-player{font-family:'Cinzel Decorative',serif;font-size:14px;color:#7a3e00;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .summary-badge{font-size:10px;letter-spacing:1px;color:#a07040;background:rgba(200,146,10,.12);border:1px solid #c8920a66;padding:2px 10px;border-radius:12px;font-family:'Cinzel',serif;}
@@ -432,7 +429,6 @@ body{
 ::-webkit-scrollbar-track{background:#f5ead0;}
 ::-webkit-scrollbar-thumb{background:#c8920a55;border-radius:3px;}
 
-/* custom confirm modal */
 #custom-confirm{
   display:none;position:fixed;inset:0;z-index:600;
   background:rgba(10,3,0,0.65);backdrop-filter:blur(3px);
@@ -515,13 +511,13 @@ body{
 <div id="play-screen">
   <div style="text-align:center;flex-shrink:0;padding:2px 0 1px;">
     <img src="https://img5.pic.in.th/file/secure-sv1/Red-White-Bold-Gladiator-Logo101.md-Photoroom.png"
-         style="height:clamp(32px,6vh,90px);width:auto;object-fit:contain;mix-blend-mode:multiply;display:block;margin:0 auto 1px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(120,60,0,.25));" />
-    <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(11px,3.2vw,32px);letter-spacing:clamp(2px,1vw,5px);color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);line-height:1.1;">SUMMIT CLUB</div>
-    <div style="font-size:clamp(7px,1.2vw,13px);letter-spacing:clamp(1px,.8vw,4px);color:#a07040;margin-top:1px;">⚓ กลุ่มการตลาด โซน 2 ⚓</div>
+         style="height:clamp(28px,5vh,70px);width:auto;object-fit:contain;mix-blend-mode:multiply;display:block;margin:0 auto 1px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(120,60,0,.25));" />
+    <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,26px);letter-spacing:clamp(2px,.8vw,4px);color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);line-height:1.1;">SUMMIT CLUB</div>
+    <div style="font-size:clamp(7px,1vw,12px);letter-spacing:clamp(1px,.6vw,3px);color:#a07040;margin-top:1px;">⚓ กลุ่มการตลาด โซน 2 ⚓</div>
   </div>
   <div class="play-topbar">
     <div class="players-progress" id="players-progress"></div>
-    <button class="btn-ghost" onclick="goSetup()" style="font-size:10px;padding:6px 12px">⚙ ตั้งค่า</button>
+    <button class="btn-ghost" onclick="goSetup()" style="font-size:10px;padding:5px 10px">⚙ ตั้งค่า</button>
   </div>
   <div class="turn-header-row">
     <span class="turn-label">✦ ตาของ</span>
@@ -595,42 +591,41 @@ body{
 // ══ DATA ══
 let allItems=[], decoyItems=[], players=[], currentTurn=0;
 
-// ══ CUSTOM CONFIRM ══
-function customConfirm(msg, sub, onYes){
-  document.getElementById('custom-confirm-msg').textContent = msg;
-  document.getElementById('custom-confirm-sub').textContent = sub || '';
+function customConfirm(msg,sub,onYes){
+  document.getElementById('custom-confirm-msg').textContent=msg;
+  document.getElementById('custom-confirm-sub').textContent=sub||'';
   document.getElementById('custom-confirm').classList.add('active');
-  const box   = document.getElementById('custom-confirm');
-  const btnYes = document.getElementById('custom-confirm-yes');
-  const btnNo  = document.getElementById('custom-confirm-no');
-  const close  = ()=>{ box.classList.remove('active'); btnYes.onclick=null; btnNo.onclick=null; };
-  btnYes.onclick = ()=>{ close(); onYes(); };
-  btnNo.onclick  = close;
-  box.onclick    = e=>{ if(e.target===box) close(); };
+  const box=document.getElementById('custom-confirm');
+  const btnYes=document.getElementById('custom-confirm-yes');
+  const btnNo=document.getElementById('custom-confirm-no');
+  const close=()=>{box.classList.remove('active');btnYes.onclick=null;btnNo.onclick=null;};
+  btnYes.onclick=()=>{close();onYes();};
+  btnNo.onclick=close;
+  box.onclick=e=>{if(e.target===box)close();};
 }
-let deckForTurn=[], flippedState=[], flippedCount=0, maxFlips=0, results=[];
+
+let deckForTurn=[],flippedState=[],flippedCount=0,maxFlips=0,results=[];
 let currentScreen='setup';
 const SK='pirateCardDraw_zone2';
 
-// ══ PERSIST ══
 function save(){
-  try{ localStorage.setItem(SK,JSON.stringify({allItems,decoyItems,players,screen:currentScreen,currentTurn,flippedCount,maxFlips,deckForTurn,flippedState,results,newDecoyBonus})); }catch(e){}
+  try{localStorage.setItem(SK,JSON.stringify({allItems,decoyItems,players,screen:currentScreen,currentTurn,flippedCount,maxFlips,deckForTurn,flippedState,results,newDecoyBonus}));}catch(e){}
 }
 function load(){
   try{
     const s=JSON.parse(localStorage.getItem(SK)||'null');
-    if(!s) return false;
-    allItems=s.allItems||[]; decoyItems=s.decoyItems||[]; players=s.players||[];
-    currentTurn=s.currentTurn||0; flippedCount=s.flippedCount||0; maxFlips=s.maxFlips||0;
-    deckForTurn=s.deckForTurn||[]; flippedState=s.flippedState||[]; results=s.results||[];
-    newDecoyBonus=s.newDecoyBonus||1; currentScreen=s.screen||'setup';
+    if(!s)return false;
+    allItems=s.allItems||[];decoyItems=s.decoyItems||[];players=s.players||[];
+    currentTurn=s.currentTurn||0;flippedCount=s.flippedCount||0;maxFlips=s.maxFlips||0;
+    deckForTurn=s.deckForTurn||[];flippedState=s.flippedState||[];results=s.results||[];
+    newDecoyBonus=s.newDecoyBonus||1;currentScreen=s.screen||'setup';
     return true;
   }catch(e){return false;}
 }
 
 function showScreen(name){
   currentScreen=name;
-  document.getElementById('setup-screen').style.display  =name==='setup'  ?'block':'none';
+  document.getElementById('setup-screen').style.display=name==='setup'?'block':'none';
   document.getElementById('play-screen').classList.toggle('active',name==='play');
   document.getElementById('summary-screen').style.display=name==='summary'?'block':'none';
   save();
@@ -640,7 +635,7 @@ function showScreen(name){
 let audioCtx=null;
 function playTone(f=440,d=.25,t="triangle",v=.22){
   try{
-    if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     const o=audioCtx.createOscillator(),g=audioCtx.createGain();
     o.connect(g);g.connect(audioCtx.destination);
     o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);
@@ -650,9 +645,9 @@ function playTone(f=440,d=.25,t="triangle",v=.22){
   }catch(e){}
 }
 function playShuffle(){[200,180,160,200].forEach((f,i)=>setTimeout(()=>playTone(f,.1,'sawtooth',.18),i*70));}
-function playReveal() {[330,415,523,659].forEach((f,k)=>setTimeout(()=>playTone(f,.2,'sine',.2),k*55));}
-function playDecoy()  {[220,196].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'sawtooth',.18),i*120));}
-function playWin()    {[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.3,'sine',.22),i*100));}
+function playReveal(){[330,415,523,659].forEach((f,k)=>setTimeout(()=>playTone(f,.2,'sine',.2),k*55));}
+function playDecoy(){[220,196].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'sawtooth',.18),i*120));}
+function playWin(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.3,'sine',.22),i*100));}
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
@@ -703,26 +698,48 @@ function toggleFullscreen(){
 }
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('fs-btn').textContent='⛶';});
 
-// ══ CARD SIZING ══
+// ══ CARD SIZING (แก้ไขหลัก) ══
 function calcCardSize(count){
   const grid=document.getElementById('cards-grid');
-  const r=grid.getBoundingClientRect();
-  const W=r.width||window.innerWidth-28;
-  const H=r.height||window.innerHeight*0.55;
-  const GAP=8,RATIO=1.5;
-  let best={w:40,h:60};
+  const W=grid.clientWidth||window.innerWidth-20;
+
+  // ── หา H จริงของ grid ──
+  // เปิดใช้ clientHeight แต่ถ้าน้อยกว่า 100px ให้ fallback
+  let H=grid.clientHeight;
+  if(H<100){
+    // คำนวณจาก viewport ลบ UI รอบข้าง
+    const topBar   = document.querySelector('.play-topbar')?.offsetHeight||36;
+    const header   = document.querySelector('#play-screen > div:first-child')?.offsetHeight||70;
+    const turnRow  = document.querySelector('.turn-header-row')?.offsetHeight||40;
+    const actions  = document.querySelector('.play-actions')?.offsetHeight||50;
+    const ticker   = 36; // news ticker
+    const gap      = 4*4; // gap ระหว่าง flex children
+    H = window.innerHeight - header - topBar - turnRow - actions - ticker - gap;
+  }
+  H=Math.max(H,160);
+
+  const GAP=6, RATIO=1.5;
+  let best={w:40};
   for(let cols=1;cols<=count;cols++){
     const rows=Math.ceil(count/cols);
     const cw=Math.floor((W-(cols-1)*GAP)/cols);
     const ch_max=Math.floor((H-(rows-1)*GAP)/rows);
-    const cw_fit=Math.min(cw,Math.floor(ch_max/RATIO));
-    const ch_fit=Math.floor(cw_fit*RATIO);
-    if(cw_fit>best.w) best={w:cw_fit,h:ch_fit};
+    // cw จากความกว้าง vs cw ที่ทำให้ความสูง fit
+    const cw_byH=Math.floor(ch_max/RATIO);
+    const cw_fit=Math.min(cw, cw_byH);
+    if(cw_fit>best.w) best={w:cw_fit};
   }
-  best.w=Math.min(best.w,160);best.h=Math.min(best.h,240);
+  // cap: ไม่เกิน 140px บน 1024px
+  best.w=Math.min(best.w,140);
   return best;
 }
-function applyCardSize(count){const{w,h}=calcCardSize(count);document.documentElement.style.setProperty('--cw',w+'px');document.documentElement.style.setProperty('--ch',h+'px');}
+
+function applyCardSize(count){
+  const{w}=calcCardSize(count);
+  // ตั้งทั้ง --cw และ --ch (ch ใช้สำหรับ card-inner fallback)
+  document.documentElement.style.setProperty('--cw',w+'px');
+  document.documentElement.style.setProperty('--ch',Math.round(w*1.5)+'px');
+}
 
 // ══ START ══
 function startGame(){
@@ -733,18 +750,15 @@ function startGame(){
 }
 
 // ══ TURN ══
-// ══ TURN STATE ══
-// currentTurn = the live turn we're progressing through
-// viewingTurn = turn we're currently peeking at (-1 = live mode)
-let viewingTurn = -1;
+let viewingTurn=-1;
 
 function startTurn(){
-  viewingTurn = -1;
-  const p=players[currentTurn]; maxFlips=p.draws;
+  viewingTurn=-1;
+  const p=players[currentTurn];maxFlips=p.draws;
   const rewardCards=allItems.map(t=>({text:t,isDecoy:false,bonus:0}));
   const decoyCards=decoyItems.map(d=>({text:d.text,isDecoy:true,bonus:d.bonus}));
   deckForTurn=[...rewardCards,...decoyCards].sort(()=>Math.random()-.5);
-  flippedState=new Array(deckForTurn.length).fill(false); flippedCount=0;
+  flippedState=new Array(deckForTurn.length).fill(false);flippedCount=0;
   playShuffle();
   document.getElementById('turn-name').textContent=p.name;
   document.getElementById('result-banner').style.display='none';
@@ -752,24 +766,23 @@ function startTurn(){
   document.getElementById('redraw-btn').style.display='none';
   document.getElementById('next-btn').style.display='none';
   document.getElementById('cards-grid').classList.remove('view-mode');
-  renderPips(); renderCards();
+  renderPips();renderCards();
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    applyCardSize(deckForTurn.length); updateHint(); setTimeout(attachCardEvents,80); save();
+    applyCardSize(deckForTurn.length);updateHint();setTimeout(attachCardEvents,80);save();
   }));
 }
 
 function renderPips(){
   document.getElementById('players-progress').innerHTML=players.map((p,i)=>{
-    const isLive = i===currentTurn && viewingTurn===-1;
-    const isViewing = viewingTurn===i;
-    const played = results[i]&&Array.isArray(results[i]._deck)&&results[i]._deck.length>0;
-    if(isLive||isViewing) return `<div class="pip active">${escHtml(p.name)}</div>`;
-    if(played) return `<div class="pip done" onclick="jumpToTurn(${i})">${escHtml(p.name)} ↺</div>`;
-    return `<div class="pip" onclick="jumpToTurn(${i})">${escHtml(p.name)}</div>`;
+    const isLive=i===currentTurn&&viewingTurn===-1;
+    const isViewing=viewingTurn===i;
+    const played=results[i]&&Array.isArray(results[i]._deck)&&results[i]._deck.length>0;
+    if(isLive||isViewing)return`<div class="pip active">${escHtml(p.name)}</div>`;
+    if(played)return`<div class="pip done" onclick="jumpToTurn(${i})">${escHtml(p.name)} ↺</div>`;
+    return`<div class="pip" onclick="jumpToTurn(${i})">${escHtml(p.name)}</div>`;
   }).join('');
 }
 
-// ── helpers ──────────────────────────────────────────────
 function hideActionBtns(){
   document.getElementById('result-banner').style.display='none';
   document.getElementById('reveal-all-btn').style.display='none';
@@ -777,119 +790,96 @@ function hideActionBtns(){
   document.getElementById('next-btn').style.display='none';
 }
 
-// Show a turn's cards in pure read-only view-mode (no live play).
-// Does NOT change currentTurn.
 function showViewTurn(i){
-  viewingTurn = i;
-  const r = results[i];
-  deckForTurn  = [...r._deck];
-  flippedState = r._flipped ? [...r._flipped] : new Array(deckForTurn.length).fill(false);
-  flippedCount = flippedState.filter(Boolean).length;
-  maxFlips     = players[i].draws;
-
-  document.getElementById('turn-name').textContent = players[i].name;
+  viewingTurn=i;
+  const r=results[i];
+  deckForTurn=[...r._deck];
+  flippedState=r._flipped?[...r._flipped]:new Array(deckForTurn.length).fill(false);
+  flippedCount=flippedState.filter(Boolean).length;
+  maxFlips=players[i].draws;
+  document.getElementById('turn-name').textContent=players[i].name;
   document.getElementById('cards-grid').classList.remove('view-mode');
-  renderPips();
-  renderCards();
+  renderPips();renderCards();
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     applyCardSize(deckForTurn.length);
     deckForTurn.forEach((_,j)=>{
-      const el=document.getElementById(`card-${j}`); if(!el) return;
-      if(flippedState[j]){ el.classList.add('flipped'); el.classList.remove('disabled'); }
-      else               { el.classList.remove('flipped'); el.classList.add('disabled'); }
+      const el=document.getElementById(`card-${j}`);if(!el)return;
+      if(flippedState[j]){el.classList.add('flipped');el.classList.remove('disabled');}
+      else{el.classList.remove('flipped');el.classList.add('disabled');}
     });
     document.getElementById('cards-grid').classList.add('view-mode');
   }));
-
-  // banner: show items
-  const r2 = results[i];
-  const itemsHtml = r2.items.length
-    ? r2.items.map(it=>`<span style="display:inline-block;margin:3px 4px;padding:4px 14px;border-radius:16px;font-size:13px;background:${it.isDecoy?'rgba(180,40,0,.1)':'rgba(200,146,10,.12)'};border:1px solid ${it.isDecoy?'#cc440088':'#c8920a88'};color:${it.isDecoy?'#8B1a00':'#5a3000'}">${escHtml(it.text)}${it.isDecoy?' 🎭':' ⭐'}</span>`).join('')
-    : '<span style="color:#b08040;font-family:Georgia;font-size:13px">ยังไม่ได้จับ</span>';
-  document.getElementById('result-text').innerHTML = `<strong>${escHtml(players[i].name)}</strong>&nbsp;|&nbsp;${itemsHtml}`;
-  document.getElementById('result-banner').style.display = 'block';
-  document.getElementById('reveal-all-btn').style.display = 'none';
-  document.getElementById('redraw-btn').style.display = '';
-  document.getElementById('next-btn').style.display = '';
-  document.getElementById('next-btn').textContent = '← กลับ';
+  const r2=results[i];
+  const itemsHtml=r2.items.length
+    ?r2.items.map(it=>`<span style="display:inline-block;margin:3px 4px;padding:4px 14px;border-radius:16px;font-size:13px;background:${it.isDecoy?'rgba(180,40,0,.1)':'rgba(200,146,10,.12)'};border:1px solid ${it.isDecoy?'#cc440088':'#c8920a88'};color:${it.isDecoy?'#8B1a00':'#5a3000'}">${escHtml(it.text)}${it.isDecoy?' 🎭':' ⭐'}</span>`).join('')
+    :'<span style="color:#b08040;font-family:Georgia;font-size:13px">ยังไม่ได้จับ</span>';
+  document.getElementById('result-text').innerHTML=`<strong>${escHtml(players[i].name)}</strong>&nbsp;|&nbsp;${itemsHtml}`;
+  document.getElementById('result-banner').style.display='block';
+  document.getElementById('reveal-all-btn').style.display='none';
+  document.getElementById('redraw-btn').style.display='';
+  document.getElementById('next-btn').style.display='';
+  document.getElementById('next-btn').textContent='← กลับ';
   updateHint();
 }
 
-// Restore the live currentTurn display (already played but returning from peek)
 function showLiveTurn(){
-  viewingTurn = -1;
-  const r = results[currentTurn];
-  document.getElementById('turn-name').textContent = players[currentTurn].name;
+  viewingTurn=-1;
+  const r=results[currentTurn];
+  document.getElementById('turn-name').textContent=players[currentTurn].name;
   document.getElementById('cards-grid').classList.remove('view-mode');
   renderPips();
-
-  if(r && Array.isArray(r._deck) && r._deck.length > 0){
-    // turn already has cards flipped — restore and show result
-    deckForTurn  = [...r._deck];
-    flippedState = [...(r._flipped || new Array(deckForTurn.length).fill(false))];
-    flippedCount = flippedState.filter(Boolean).length;
-    maxFlips     = players[currentTurn].draws + (r.extraFlips||0);
+  if(r&&Array.isArray(r._deck)&&r._deck.length>0){
+    deckForTurn=[...r._deck];
+    flippedState=[...(r._flipped||new Array(deckForTurn.length).fill(false))];
+    flippedCount=flippedState.filter(Boolean).length;
+    maxFlips=players[currentTurn].draws+(r.extraFlips||0);
     renderCards();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       applyCardSize(deckForTurn.length);
       deckForTurn.forEach((_,j)=>{
-        const el=document.getElementById(`card-${j}`); if(!el) return;
-        if(flippedState[j]){ el.classList.add('flipped'); el.classList.remove('disabled'); }
-        else               { el.classList.remove('flipped'); el.classList.add('disabled'); }
+        const el=document.getElementById(`card-${j}`);if(!el)return;
+        if(flippedState[j]){el.classList.add('flipped');el.classList.remove('disabled');}
+        else{el.classList.remove('flipped');el.classList.add('disabled');}
       });
       document.getElementById('cards-grid').classList.add('view-mode');
       updateHint();
-      // re-show the result banner
-      const p = players[currentTurn], isLast = currentTurn>=players.length-1;
-      const rc = results[currentTurn].items.filter(x=>!x.isDecoy).length;
-      const dc = results[currentTurn].items.filter(x=>x.isDecoy).length;
-      let txt = `${p.name} เปิดครบแล้ว!`;
-      if(dc>0) txt += `  (รางวัล ${rc} | หลอก ${dc})`;
-      document.getElementById('result-text').textContent = txt;
-      document.getElementById('result-banner').style.display = 'block';
-      document.getElementById('reveal-all-btn').style.display = '';
-      document.getElementById('redraw-btn').style.display = '';
-      document.getElementById('next-btn').style.display = '';
-      document.getElementById('next-btn').textContent = isLast ? 'ดูสรุปผล' : 'ถัดไป ➜';
+      const p=players[currentTurn],isLast=currentTurn>=players.length-1;
+      const rc=results[currentTurn].items.filter(x=>!x.isDecoy).length;
+      const dc=results[currentTurn].items.filter(x=>x.isDecoy).length;
+      let txt=`${p.name} เปิดครบแล้ว!`;
+      if(dc>0)txt+=`  (รางวัล ${rc} | หลอก ${dc})`;
+      document.getElementById('result-text').textContent=txt;
+      document.getElementById('result-banner').style.display='block';
+      document.getElementById('reveal-all-btn').style.display='';
+      document.getElementById('redraw-btn').style.display='';
+      document.getElementById('next-btn').style.display='';
+      document.getElementById('next-btn').textContent=isLast?'ดูสรุปผล':'ถัดไป ➜';
     }));
-  } else {
-    // turn not started yet
-    startTurn();
-  }
+  }else{startTurn();}
 }
 
-// ── navigation ────────────────────────────────────────────
 function jumpToTurn(i){
-  if(i===currentTurn && viewingTurn===-1) return;  // already live here
-  if(i===viewingTurn) return;                       // already peeking here
-
-  const played = results[i] && Array.isArray(results[i]._deck) && results[i]._deck.length>0;
-
+  if(i===currentTurn&&viewingTurn===-1)return;
+  if(i===viewingTurn)return;
+  const played=results[i]&&Array.isArray(results[i]._deck)&&results[i]._deck.length>0;
   if(!played){
-    // not yet played → make it the new live turn
-    viewingTurn = -1;
-    currentTurn = i;
-    if(!results[currentTurn]) results[currentTurn]={name:players[i].name,draws:players[i].draws,items:[]};
-    hideActionBtns();
-    startTurn();
-    return;
+    viewingTurn=-1;currentTurn=i;
+    if(!results[currentTurn])results[currentTurn]={name:players[i].name,draws:players[i].draws,items:[]};
+    hideActionBtns();startTurn();return;
   }
-
-  // already played → peek (always allowed, no lock)
   showViewTurn(i);
 }
 
 function redrawCurrent(){
-  if(splashActive){ dismissSplash(); return; }
-  const target = viewingTurn!==-1 ? viewingTurn : currentTurn;
-  if(target < 0 || target >= players.length) return;
+  if(splashActive){dismissSplash();return;}
+  const target=viewingTurn!==-1?viewingTurn:currentTurn;
+  if(target<0||target>=players.length)return;
   customConfirm(
     `จับใหม่สำหรับ "${players[target].name}"?`,
     'ผลเดิมจะถูกลบทั้งหมด',
     ()=>{
-      results[target] = {name:players[target].name, draws:players[target].draws, items:[], _deck:null, _flipped:null};
-      viewingTurn = -1;
-      currentTurn = target;
+      results[target]={name:players[target].name,draws:players[target].draws,items:[],_deck:null,_flipped:null};
+      viewingTurn=-1;currentTurn=target;
       hideActionBtns();
       document.getElementById('cards-grid').classList.remove('view-mode');
       startTurn();
@@ -900,23 +890,20 @@ function redrawCurrent(){
 function checkTurnDone(){
   if(flippedCount>=maxFlips){
     if(splashActive){
-      // wait for splash to finish, then show result
-      const orig = splashDoneCallback;
-      splashDoneCallback = ()=>{ if(orig) orig(); setTimeout(showTurnResult,300); };
-    } else {
-      setTimeout(showTurnResult,450);
-    }
+      const orig=splashDoneCallback;
+      splashDoneCallback=()=>{if(orig)orig();setTimeout(showTurnResult,300);};
+    }else{setTimeout(showTurnResult,450);}
   }
 }
 
 function showTurnResult(){
   playWin();
   document.getElementById('cards-grid').classList.add('view-mode');
-  const p=players[currentTurn], isLast=currentTurn>=players.length-1;
+  const p=players[currentTurn],isLast=currentTurn>=players.length-1;
   const rc=results[currentTurn].items.filter(x=>!x.isDecoy).length;
   const dc=results[currentTurn].items.filter(x=>x.isDecoy).length;
   let txt=`${p.name} เปิดครบแล้ว!`;
-  if(dc>0) txt+=`  (รางวัล ${rc} | หลอก ${dc})`;
+  if(dc>0)txt+=`  (รางวัล ${rc} | หลอก ${dc})`;
   document.getElementById('result-text').textContent=txt;
   document.getElementById('result-banner').style.display='block';
   document.getElementById('reveal-all-btn').style.display='';
@@ -927,12 +914,7 @@ function showTurnResult(){
 }
 
 function nextTurn(){
-  if(viewingTurn!==-1){
-    // peeking at old turn → go back to live currentTurn
-    showLiveTurn();
-    return;
-  }
-  // normal advance to next player
+  if(viewingTurn!==-1){showLiveTurn();return;}
   hideActionBtns();
   document.getElementById('cards-grid').classList.remove('view-mode');
   currentTurn++;
@@ -964,7 +946,7 @@ function renderCards(){
     const sz=len>20?'xs':len>10?'sm':'';
     const df=card.isDecoy?'decoy':'';
     const dt=card.isDecoy?'decoy-text':'';
-    return `<div class="card-wrapper" id="card-${i}" style="animation-delay:${i*70}ms">
+    return`<div class="card-wrapper" id="card-${i}" style="animation-delay:${i*70}ms">
       <div class="card-flash"></div>
       <div class="card-inner" id="inner-${i}">
         <div class="card-face card-back">
@@ -995,7 +977,7 @@ function launchConfetti(){
     const ang=Math.random()*Math.PI*2,spd=4+Math.random()*10;
     confParticles.push({x:innerWidth/2,y:innerHeight*0.45,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-6,w:6+Math.random()*8,h:4+Math.random()*6,rot:Math.random()*360,rotV:(Math.random()-.5)*10,color:COLORS[Math.floor(Math.random()*COLORS.length)],alpha:1,life:1});
   }
-  if(!confRAF) animConf();
+  if(!confRAF)animConf();
 }
 function animConf(){
   confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);
@@ -1006,39 +988,33 @@ function animConf(){
     confCtx.save();confCtx.globalAlpha=p.alpha;confCtx.translate(p.x,p.y);confCtx.rotate(p.rot*Math.PI/180);
     confCtx.fillStyle=p.color;confCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);confCtx.restore();
   });
-  if(confParticles.length>0) confRAF=requestAnimationFrame(animConf);
+  if(confParticles.length>0)confRAF=requestAnimationFrame(animConf);
   else{confRAF=null;confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);}
 }
 
 // ══ REWARD SPLASH ══
-let splashActive = false;
-let splashDoneCallback = null;
-
+let splashActive=false,splashDoneCallback=null;
 function dismissSplash(){
-  if(!splashActive) return;
-  splashActive = false;
+  if(!splashActive)return;
+  splashActive=false;
   document.getElementById('reward-splash').classList.remove('active');
-  if(splashDoneCallback){ const cb=splashDoneCallback; splashDoneCallback=null; cb(); }
+  if(splashDoneCallback){const cb=splashDoneCallback;splashDoneCallback=null;cb();}
 }
-
-function showRewardSplash(text, onDone){
-  document.getElementById('splash-text').textContent = text;
-  splashActive = true;
-  splashDoneCallback = onDone;
+function showRewardSplash(text,onDone){
+  document.getElementById('splash-text').textContent=text;
+  splashActive=true;splashDoneCallback=onDone;
   document.getElementById('reward-splash').classList.add('active');
   launchConfetti();
-  // auto-dismiss after 2.5s if user doesn't tap
-  setTimeout(dismissSplash, 2500);
+  setTimeout(dismissSplash,2500);
 }
-
-document.getElementById('reward-splash').addEventListener('click', dismissSplash);
-document.getElementById('reward-splash').addEventListener('touchend', e=>{ e.preventDefault(); dismissSplash(); });
+document.getElementById('reward-splash').addEventListener('click',dismissSplash);
+document.getElementById('reward-splash').addEventListener('touchend',e=>{e.preventDefault();dismissSplash();});
 
 // ══ NEWS TICKER ══
 let tickerHistory=[];
 function addTickerItem(team,text,isDecoy){tickerHistory.push({team,text,isDecoy});updateTicker();}
 function updateTicker(){
-  if(!tickerHistory.length) return;
+  if(!tickerHistory.length)return;
   document.getElementById('news-ticker').classList.add('active');
   const items=[...tickerHistory,...tickerHistory];
   document.getElementById('ticker-track').innerHTML=items.map(h=>`<span class="ticker-item"><span class="ticker-team">${escHtml(h.team)}</span><span style="color:#c8920a">›</span><span class="${h.isDecoy?'ticker-decoy':'ticker-reward'}">${escHtml(h.text)}${h.isDecoy?' 🎭':' ⭐'}</span><span class="ticker-sep">❖</span></span>`).join('');
@@ -1051,9 +1027,9 @@ function clearTicker(){tickerHistory=[];document.getElementById('news-ticker').c
 let overlayCardIndex=-1,dragStartY=0,dragStartX=0,dragPct=0,overlayRevealed=false,isDragging=false;
 
 function openOverlay(i){
-  if(splashActive) return;
-  if(document.getElementById('cards-grid').classList.contains('view-mode')) return;
-  if(flippedState[i]||flippedCount>=maxFlips) return;
+  if(splashActive)return;
+  if(document.getElementById('cards-grid').classList.contains('view-mode'))return;
+  if(flippedState[i]||flippedCount>=maxFlips)return;
   overlayCardIndex=i;overlayRevealed=false;dragPct=0;isDragging=false;
   const card=deckForTurn[i],num=i+1,len=card.text.length;
   const szCls=len>20?'xs':len>10?'sm':'';
@@ -1078,22 +1054,22 @@ function openOverlay(i){
 }
 
 function onOverlayMove(cx,cy){
-  if(overlayRevealed||!isDragging) return;
+  if(overlayRevealed||!isDragging)return;
   const dy=dragStartY-cy,dx=cx-dragStartX;
   const drag=Math.max(dy,dx*0.6);
   dragPct=Math.max(0,Math.min(1,drag/120));
   const inner=document.getElementById('overlay-inner');
   inner.style.transition='none';inner.style.transform=`rotateY(${dragPct*180}deg)`;
   document.getElementById('drag-hint').style.opacity=String(Math.max(0,1-dragPct*2));
-  if(dragPct>=1) finishReveal();
+  if(dragPct>=1)finishReveal();
 }
 function onOverlayMouseMove(e){onOverlayMove(e.clientX,e.clientY);}
 function onOverlayDragTouch(e){if(!isDragging)return;e.preventDefault();onOverlayMove(e.touches[0].clientX,e.touches[0].clientY);}
 
 function onOverlayRelease(){
-  if(!isDragging) return;isDragging=false;
-  if(overlayRevealed) return;
-  if(dragPct>=0.52) finishReveal();
+  if(!isDragging)return;isDragging=false;
+  if(overlayRevealed)return;
+  if(dragPct>=0.52)finishReveal();
   else{
     const inner=document.getElementById('overlay-inner');
     inner.style.transition='transform .35s cubic-bezier(.2,.8,.3,1)';
@@ -1103,7 +1079,7 @@ function onOverlayRelease(){
 }
 
 function finishReveal(){
-  if(overlayRevealed) return;overlayRevealed=true;
+  if(overlayRevealed)return;overlayRevealed=true;
   const inner=document.getElementById('overlay-inner');
   inner.classList.add('snap-open');
   document.getElementById('drag-hint').style.opacity='0';
@@ -1123,7 +1099,7 @@ function confirmReveal(){
   if(!card.isDecoy){
     showRewardSplash(card.text,()=>{doReveal(overlayCardIndex);});
     addTickerItem(playerName,card.text,false);
-  } else {
+  }else{
     addTickerItem(playerName,card.text,true);
     doReveal(overlayCardIndex);
   }
@@ -1143,14 +1119,13 @@ function rerollReveal(){
 
 function closeOverlay(){document.getElementById('card-overlay').classList.remove('active');isDragging=false;}
 
-// single overlay mousedown listener
 document.getElementById('card-overlay').addEventListener('mousedown',e=>{
-  if(overlayRevealed) return;
+  if(overlayRevealed)return;
   if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
   isDragging=true;dragStartY=e.clientY;dragStartX=e.clientX;dragPct=0;
 });
 document.getElementById('card-overlay').addEventListener('touchstart',e=>{
-  if(overlayRevealed) return;
+  if(overlayRevealed)return;
   if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
   isDragging=true;dragStartY=e.touches[0].clientY;dragStartX=e.touches[0].clientX;dragPct=0;
 },{passive:true});
@@ -1163,7 +1138,7 @@ document.addEventListener('touchend',onOverlayRelease);
 function attachCardEvents(){
   deckForTurn.forEach((_,i)=>{
     const el=document.getElementById(`card-${i}`);
-    if(!el||flippedState[i]) return;
+    if(!el||flippedState[i])return;
     const onDown=e=>{if(flippedState[i]||flippedCount>=maxFlips)return;e.preventDefault();openOverlay(i);};
     el.addEventListener('mousedown',onDown);
     el.addEventListener('touchstart',onDown,{passive:false});
@@ -1172,10 +1147,9 @@ function attachCardEvents(){
 
 function doReveal(i){
   const el=document.getElementById(`card-${i}`);
-  if(!el||flippedState[i]) return;
+  if(!el||flippedState[i])return;
   flippedState[i]=true;flippedCount++;
-  // snapshot deck on first flip so we can review later
-  if(flippedCount===1 && results[currentTurn]) results[currentTurn]._deck=[...deckForTurn];
+  if(flippedCount===1&&results[currentTurn])results[currentTurn]._deck=[...deckForTurn];
   const card=deckForTurn[i];
   results[currentTurn].items.push(card);
   if(card.isDecoy){
@@ -1188,8 +1162,7 @@ function doReveal(i){
     deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.add('disabled');}});
   }
   updateHint();
-  // snapshot flipped state for review
-  if(results[currentTurn]) results[currentTurn]._flipped=[...flippedState];
+  if(results[currentTurn])results[currentTurn]._flipped=[...flippedState];
   save();checkTurnDone();
 }
 
@@ -1205,23 +1178,21 @@ function revealAll(){
       },i*70);
     }
   });
-  // update snapshot after all cards flip
   setTimeout(()=>{
     if(results[currentTurn]){
-      if(!results[currentTurn]._deck || !results[currentTurn]._deck.length)
-        results[currentTurn]._deck = [...deckForTurn];
-      results[currentTurn]._flipped = new Array(deckForTurn.length).fill(true);
+      if(!results[currentTurn]._deck||!results[currentTurn]._deck.length)
+        results[currentTurn]._deck=[...deckForTurn];
+      results[currentTurn]._flipped=new Array(deckForTurn.length).fill(true);
     }
     document.getElementById('cards-grid').classList.add('view-mode');
     save();
-  }, deckForTurn.length*70 + 300);
+  },deckForTurn.length*70+300);
 }
 
 function updateHint(){
   document.getElementById('turn-draws').textContent=`สิทธิ์ ${flippedCount}/${maxFlips}`;
   document.getElementById('cards-hint').textContent=flippedCount>=maxFlips?'✨ เปิดครบแล้ว!':'กดที่การ์ดแล้วลากขึ้นเพื่อเปิด';
 }
-
 
 function goSetup(){showScreen('setup');}
 
@@ -1249,7 +1220,8 @@ function playAgain(){
 function resetAll(){results=[];currentTurn=0;clearTicker();showScreen('setup');}
 
 window.addEventListener('resize',()=>{
-  if(currentScreen==='play'&&deckForTurn.length>0) requestAnimationFrame(()=>applyCardSize(deckForTurn.length));
+  if(currentScreen==='play'&&deckForTurn.length>0)
+    requestAnimationFrame(()=>applyCardSize(deckForTurn.length));
 });
 
 // ══ INIT ══
@@ -1264,11 +1236,11 @@ if(restored){
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       applyCardSize(deckForTurn.length);restoreFlipped();updateHint();
       setTimeout(attachCardEvents,80);
-      if(flippedCount>=maxFlips&&maxFlips>0) showTurnResult();
+      if(flippedCount>=maxFlips&&maxFlips>0)showTurnResult();
     }));
-  } else if(currentScreen==='summary'){showScreen('summary');showSummary();}
+  }else if(currentScreen==='summary'){showScreen('summary');showSummary();}
   else showScreen('setup');
-} else {
+}else{
   allItems=["สมบัติทองคำ","แผนที่ลับ","ขวดรัม","นกแก้ว","ปืนคาบศิลา","กระดูกไขว้","เรือใบ","ดาบคัตลาส"];
   decoyItems=[{text:"ยังไม่ใช่นะ!",bonus:1},{text:"โชคไม่ดี เลือกใหม่ 2 ใบ!",bonus:2}];
   players=[{name:'ฝ่ายที่ 1',draws:3},{name:'ฝ่ายที่ 2',draws:2}];
