@@ -177,13 +177,13 @@ body {
 #play-top {
   flex-shrink: 0;
   display: flex; align-items: center;
-  gap: 8px;
-  padding: 5px 10px 4px;
+  gap: 12px;
+  padding: 6px 16px 5px;
   background: linear-gradient(180deg, rgba(200,146,10,.12) 0%, transparent 100%);
   border-bottom: 1px solid rgba(200,146,10,.25);
 }
 #play-logo {
-  height: clamp(28px,4.5vh,56px);
+  height: clamp(32px,5vh,80px);
   width: auto; object-fit: contain;
   mix-blend-mode: multiply;
   filter: drop-shadow(0 2px 5px rgba(120,60,0,.25));
@@ -193,11 +193,11 @@ body {
 #play-title-wrap { flex-shrink: 0; line-height: 1.15; }
 #play-title-wrap .t1 {
   font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(9px,1.6vw,18px);
+  font-size: clamp(10px,1.4vw,26px);
   letter-spacing: 3px; color: var(--brown-mid);
 }
 #play-title-wrap .t2 {
-  font-size: clamp(7px,1vw,11px);
+  font-size: clamp(8px,0.85vw,16px);
   letter-spacing: 3px; color: #a07040;
 }
 
@@ -207,8 +207,8 @@ body {
   flex: 1; overflow: hidden;
 }
 .pip {
-  padding: 4px 12px; border-radius: 20px;
-  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: clamp(11px,0.85vw,15px); letter-spacing: 1px;
   border: 1px solid #cc220066; color: #cc2200;
   background: rgba(200,30,0,.07);
   transition: all .25s; white-space: nowrap;
@@ -231,16 +231,16 @@ body {
 /* ── Turn bar ── */
 #turn-bar {
   flex-shrink: 0;
-  display: flex; align-items: center; gap: 8px;
-  padding: 5px 12px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 18px;
   background: linear-gradient(160deg,var(--parchment),var(--cream2));
   border-bottom: 2px solid var(--gold);
   box-shadow: 0 3px 12px rgba(120,60,0,.1);
 }
-#turn-bar .lbl { font-family:'Cinzel Decorative',serif; font-size: clamp(9px,1.5vw,15px); letter-spacing:1px; color:#a07040; }
-#turn-bar .name { font-family:'Cinzel Decorative',serif; font-size: clamp(9px,1.5vw,15px); color: var(--brown-mid); font-weight:700; }
-#turn-bar .draws { font-size: clamp(9px,1.5vw,15px); color:#b08040; letter-spacing:1px; }
-#turn-bar .hint { font-size: clamp(8px,1.2vw,13px); color:#a07040; margin-left:auto; white-space:nowrap; }
+#turn-bar .lbl { font-family:'Cinzel Decorative',serif; font-size: clamp(11px,1.2vw,22px); letter-spacing:1px; color:#a07040; }
+#turn-bar .name { font-family:'Cinzel Decorative',serif; font-size: clamp(11px,1.2vw,22px); color: var(--brown-mid); font-weight:700; }
+#turn-bar .draws { font-size: clamp(11px,1.2vw,22px); color:#b08040; letter-spacing:1px; }
+#turn-bar .hint { font-size: clamp(10px,1vw,18px); color:#a07040; margin-left:auto; white-space:nowrap; }
 
 /* ── Cards grid ── */
 #cards-grid {
@@ -378,8 +378,8 @@ body {
 /* ── Action bar ── */
 #action-bar {
   flex-shrink: 0;
-  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
-  padding: 6px 10px 42px;
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+  padding: 8px 16px 42px;
   background: linear-gradient(0deg, rgba(200,146,10,.08) 0%, transparent 100%);
   border-top: 1px solid rgba(200,146,10,.2);
 }
@@ -866,44 +866,41 @@ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement
    JS แค่คำนวณ --cw ที่เหมาะสม
 ═══════════════════════════════ */
 function computeCardWidth(count){
-  // วัดพื้นที่ grid จริง
   const grid = document.getElementById('cards-grid');
   const gw = grid.clientWidth  || window.innerWidth  - 20;
   let   gh = grid.clientHeight;
 
-  // ถ้า grid ยังไม่ได้ layout (height=0) ให้คำนวณเอง
   if(gh < 80){
-    const top    = document.getElementById('play-top')?.offsetHeight    || 50;
-    const tbar   = document.getElementById('turn-bar')?.offsetHeight    || 36;
-    const abar   = document.getElementById('action-bar')?.offsetHeight  || 52;
+    const top    = document.getElementById('play-top')?.offsetHeight    || 60;
+    const tbar   = document.getElementById('turn-bar')?.offsetHeight    || 44;
+    const abar   = document.getElementById('action-bar')?.offsetHeight  || 60;
     const ticker = 36;
-    gh = window.innerHeight - top - tbar - abar - ticker - 10;
+    gh = window.innerHeight - top - tbar - abar - ticker - 12;
   }
   gh = Math.max(gh, 100);
 
-  const GAP   = 6;   // ตรงกับ CSS gap
-  const RATIO = 1.5; // สัดส่วน h/w = 3/2
+  const GAP   = 10;
+  const RATIO = 1.5;
   let best = 30;
 
-  for(let cols=1; cols<=count; cols++){
-    const rows = Math.ceil(count/cols);
-    const cw_w = Math.floor((gw - (cols-1)*GAP) / cols);
-    const ch_m = Math.floor((gh - (rows-1)*GAP) / rows);
-    const cw_h = Math.floor(ch_m / RATIO);
-    const fit  = Math.min(cw_w, cw_h);
+  for(let cols = 1; cols <= count; cols++){
+    const rows  = Math.ceil(count / cols);
+    const cw_w  = Math.floor((gw - (cols - 1) * GAP) / cols);
+    const ch_m  = Math.floor((gh - (rows - 1) * GAP) / rows);
+    const cw_h  = Math.floor(ch_m / RATIO);
+    const fit   = Math.min(cw_w, cw_h);
     if(fit > best) best = fit;
   }
 
-  // จำกัดสูงสุดตามขนาดจอ
-  const maxW = Math.min(Math.floor(gw / Math.max(1, Math.ceil(count / Math.ceil(count * GAP / gw)))), 150);
-  return Math.min(best, maxW, 150);
+  // cap สูงสุด scale ตาม viewport — จอ 1080p ได้ถึง ~220px
+  const capByScreen = Math.floor(Math.min(window.innerWidth, window.innerHeight) * 0.22);
+  return Math.min(best, capByScreen, 220);
 }
 
 function applyCardSize(count){
   const w = computeCardWidth(count);
   document.documentElement.style.setProperty('--cw', w + 'px');
-  // --gap ปรับตาม card count
-  const gap = count > 15 ? 4 : count > 8 ? 5 : 6;
+  const gap = count > 15 ? 6 : count > 8 ? 8 : 10;
   document.getElementById('cards-grid').style.gap = gap + 'px';
 }
 
